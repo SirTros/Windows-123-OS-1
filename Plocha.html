@@ -409,27 +409,26 @@ window.runCmdFromConsole = function(cmd){
     console.log('Command executed in Windows123 CMD: ' + cmd);
 };
 
-// --- F10 key spam detection ---
-let f10Counter = 0;
-let f10Timeout = null;
+// --- Alt key spam detection ---
+let altCounter = 0;
+let altTimeout = null;
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'F10') {
-    f10Counter++;
+  if (e.key === 'Alt') {
+    altCounter++;
 
-    clearTimeout(f10Timeout);
-    f10Timeout = setTimeout(() => {
-      f10Counter = 0;
-    }, 1000);
+    clearTimeout(altTimeout);
+    altTimeout = setTimeout(() => { altCounter = 0; }, 1000);
 
-    if (f10Counter >= 5) {
+    if (altCounter >= 5) {
+      altCounter = 0; // reset po detekci
       window.location.href = 'Black.html';
     }
   }
 });
-
 </script>
 </body>
 </html>
+
 
 
