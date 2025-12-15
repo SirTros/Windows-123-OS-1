@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System options menu...</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: black;
+      color: white;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      cursor: none;
+      user-select: none;
+    }
+
+    #top-container {
+      position: relative;
+      margin-top: 120px;
+      width: 150px;
+      height: 150px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #logo {
+      width: 150px;
+      height: 150px;
+      opacity: 1;
+      transition: opacity 0.7s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #spinner {
+      border: 8px solid #ffffff30;
+      border-top: 8px solid #0078D7;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      position: absolute;
+      top: 40px;
+      left: 40px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #restarting-text {
+      position: fixed;
+      top: 63%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      font-weight: bold;
+      user-select: none;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.7s ease;
+      text-align: center;
+    }
+
+    #options-text {
+      position: fixed;
+      bottom: 30px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+      user-select: none;
+      white-space: nowrap;
+      opacity: 1;
+      transition: all 1.5s ease;
+    }
+
+    #options-text.move-up {
+      bottom: 140px;
+      font-size: 32px;
+    }
+
+    #options {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+
+    #options.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #options button {
+      padding: 12px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background-color: green;
+      color: white;
+      transition: background-color 0.3s;
+      user-select: none;
+      white-space: nowrap;
+      min-width: 100px;
+    }
+
+    #options button:hover {
+      background-color: darkgreen;
+    }
+
+    #Back {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+
+    #Back.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #btn-back {
+      padding: 12px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background-color: red;
+      color: white;
+      transition: background-color 0.3s;
+      user-select: none;
+      white-space: nowrap;
+      min-width: 100px;
+    }
+
+    #btn-back:hover {
+      background-color: darkred;
+    }
+
+    /* Confirm overlay pro BSOD */
+    #confirmOverlay{
+      position: fixed; inset:0; display:none;
+      background: rgba(0,0,0,0.5);
+      justify-content:center; align-items:center;
+      z-index:9999;
+    }
+    #confirmBox{
+      background:black; color:white; padding:20px 26px;
+      border-radius:10px; min-width:320px; text-align:center;
+      font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+    }
+    #confirmBox p{ margin-bottom:16px; font-size:18px; }
+    .confirm-buttons{ display:flex; justify-content:center; gap:18px; }
+    .confirm-buttons button{
+      padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
+      font-weight:600; font-size:15px;
+    }
+    .confirm-yes{ background:#0a8f2a; color:white; }
+    .confirm-no{ background:#c62828; color:white; }
+  </style>
+</head>
+<body>
+
+  <div id="top-container">
+    <img src="https://d6eb232077.cbaul-cdnwnd.com/c0848f8596b3a88e364a38be6010cdc1/200000015-5091150912/450/SirTros-logo.webp" alt="SirTros logo" id="logo" />
+    <div id="spinner"></div>
+  </div>
+
+  <div id="restarting-text">_______________</div>
+  <div id="options-text">System options menu...</div>
+
+  <div id="options">
+    <button id="btn-start">Start</button>
+    <button id="btn-restart">Restart</button>
+    <button id="btn-turnoff">Turn off</button>
+  </div>
+  
+  <div id="Back">  
+    <button id="btn-back">BSOD</button>
+  </div>
+
+  <!-- Confirm overlay pro BSOD -->
+  <div id="confirmOverlay">
+    <div id="confirmBox">
+      <p id="confirmText">Are you sure you want to emergency restart the computer?</p>
+      <div class="confirm-buttons">
+        <button class="confirm-yes" id="confirmYes">YES</button>
+        <button class="confirm-no" id="confirmNo">NO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zvuky -->
+  <audio id="errorSound" src="Sounds/Error.wav" preload="auto"></audio>
+  <audio id="windowSound" src="Sounds/Window.wav" preload="auto"></audio>
+
+  <script>
+    const logo = document.getElementById("logo");
+    const spinner = document.getElementById("spinner");
+    const restartingText = document.getElementById("restarting-text");
+    const optionsText = document.getElementById("options-text");
+    const options = document.getElementById("options");
+    const back = document.getElementById("Back");
+
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo  = document.getElementById('confirmNo');
+    const btnBSOD = document.getElementById('btn-back');
+
+    const errorSound = document.getElementById('errorSound');
+    const windowSound = document.getElementById('windowSound');
+
+    function handleClick(url) {
+      optionsText.style.opacity = "0";
+      restartingText.style.opacity = "0";
+      spinner.style.opacity = "0";
+      options.style.opacity = "0";
+      back.style.opacity = "0";
+      logo.style.opacity = "0";
+      document.body.style.cursor = "default";
+
+      setTimeout(() => {
+        window.location.href = url;
+      }, 1500);
+    }
+
+    // 3s: zmizí logo → objeví se kolečko
+    setTimeout(() => {
+      logo.style.opacity = 0;
+      setTimeout(() => {
+        spinner.style.opacity = 1;
+      }, 700);
+    }, 3000);
+
+    // 15s: zmizí text + kolečko → ukáže se nabídka
+    setTimeout(() => {
+      restartingText.style.opacity = 0;
+      spinner.style.opacity = 0;
+      optionsText.classList.add("move-up");
+
+      setTimeout(() => {
+        options.classList.add("visible");
+        back.classList.add("visible");
+        document.body.style.cursor = "auto";
+        logo.style.display = "none";
+        spinner.style.display = "none";
+      }, 1500);
+    }, 15000);
+
+    document.getElementById("btn-start").addEventListener("click", () => handleClick("Nacitani.html"));
+    document.getElementById("btn-restart").addEventListener("click", () => handleClick("Restartovani.html"));
+    document.getElementById("btn-turnoff").addEventListener("click", () => handleClick("Vypinani.html"));
+
+    // Confirm jen pro BSOD
+    btnBSOD.addEventListener('click', ()=>{
+      windowSound.play();       // zvuk při otevření confirm
+      confirmOverlay.style.display = 'flex';
+    });
+
+    confirmYes.addEventListener('click', ()=>{
+      errorSound.play();        // zvuk při potvrzení YES
+      confirmOverlay.style.display = 'none';
+      handleClick("Error.html");
+    });
+
+    confirmNo.addEventListener('click', ()=>{
+      confirmOverlay.style.display = 'none';
+    });
+
+    document.addEventListener('keydown', function escHandler(e){
+      if(e.key === 'Escape' && confirmOverlay.style.display === 'flex'){
+        confirmOverlay.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>

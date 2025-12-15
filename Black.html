@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Screen</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: black;
+    color: white; /* bílý text */
+    font-family: 'Courier New', Courier, monospace; /* terminálové písmo */
+    user-select: none;
+  }
+
+  #error-text {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+  <div id="error-text">_</div>
+
+  <script>
+    // Po 2 sekundách přesměruje na Nacitani.html
+    setTimeout(() => {
+      window.location.href = "Nacitani.html";
+    }, 100);
+  </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Windows123 desktop</title>
+<style>
+body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;background-image:url('Pictures/Pozadi.png');background-size:cover;background-position:center;background-repeat:no-repeat;user-select:none;}
+#desktop{width:100%;height:100%;position:relative;padding-bottom:50px;}
+.icon{width:60px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:absolute;border-radius:6px;color:white;text-align:center;}
+.icon:hover{background:rgba(255,255,255,0.2);}
+.icon span{font-size:36px;user-select:none;}
+.icon label{margin-top:4px;font-size:12px;line-height:14px;user-select:none;white-space:normal;word-break:break-word;max-width:60px;}
+.app-window{position:fixed;background:#f0f0f0;border:2px solid #333;border-radius:8px;box-shadow:0 0 12px rgba(0,0,0,0.4);z-index:1000;display:flex;flex-direction:column;overflow:hidden;}
+.app-header{background:#333;color:white;padding:5px 10px;cursor:move;user-select:none;display:flex;justify-content:space-between;align-items:center;font-weight:bold;}
+.app-close-btn{background:none;border:none;color:white;font-size:20px;font-weight:bold;cursor:pointer;line-height:1;user-select:none;}
+#text-app textarea{flex-grow:1;padding:10px;border:none;resize:none;font-size:16px;font-family:monospace;outline:none;width:100%;box-sizing:border-box;}
+#calc-app{width:250px;display:none;flex-direction:column;}
+#calc-display{width:100%;font-size:24px;padding:8px;text-align:right;margin:10px 0;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;}
+#calc-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px;}
+#calc-buttons button{font-size:18px;padding:10px;cursor:pointer;border-radius:4px;border:1px solid #999;background:white;user-select:none;transition:background-color 0.2s;}
+#calc-clear{grid-column:span 4;background:#f44336;color:black;font-weight:bold;border:none;}
+#taskbar{position:fixed;bottom:0;left:0;right:0;height:50px;background-color:#202020;display:flex;align-items:center;padding:0 10px;user-select:none;z-index:2000;justify-content:space-between;}
+#start-button{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+#start-button img { height:32px; width:32px; }
+#start-menu{position:fixed;bottom:50px;left:10px;background:white;border:2px solid #333;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.5);width:150px;display:none;flex-direction:column;z-index:2100;user-select:none;}
+#start-menu button{background:none;border:none;padding:10px;font-size:14px;cursor:pointer;border-bottom:1px solid #ccc;text-align:left;}
+#start-menu button:last-child{border-bottom:none;}
+#start-menu button:hover{background:#eee;}
+#datetime{color:white;margin-right:10px;font-size:12px;font-weight:bold;display:flex;flex-direction:column;justify-content:center;height:50px;user-select:none;text-align:right;}
+#datetime #time{font-size:16px;line-height:1;}
+#datetime #date{font-size:12px;line-height:1;}
+#files-app{width:320px;height:360px;display:none;flex-direction:column;position:fixed;top:80px;left:120px;background:#f0f0f0;border:2px solid #333;border-radius:8px;box-shadow:0 0 12px rgba(0,0,0,0.4);z-index:1000;overflow-y:auto;padding:10px;box-sizing:border-box;}
+#files-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+#files-list .file-icon{width:60px;height:80px;display:flex;flex-direction:column;align-items:center;cursor:pointer;user-select:none;color:black;border-radius:6px;text-align:center;}
+#files-list .file-icon span{font-size:36px;user-select:none;}
+#files-list .file-icon label{font-size:12px;margin-top:4px;white-space:normal;word-break:break-word;max-width:60px;color:black;}
+#files-list .file-icon:hover{background:rgba(0,0,0,0.1);}
+#toastContainer{position:fixed;top:10px;right:10px;z-index:9999;}
+.toast{background:#fff;color:#000;padding:10px 20px;margin-down:50px;border-radius:5px;box-shadow:0 0 5px black;font-family:monospace;opacity:0;transition:opacity 0.3s;}
+#volume-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(50,50,50,0.9);color:white;padding:8px 16px;border-radius:8px;font-size:16px;display:none;z-index:5000;}
+#terminal-output, #terminal-input { font-family: 'Press Start 2P', monospace; }
+</style>
+</head>
+<body>
+<div id="desktop"></div>
+
+<div class="icon" id="icon-text" style="top:20px; left:20px;"><span>📄</span><label>Notepad</label></div>
+<div class="icon" id="icon-calc" style="top:20px; left:100px;"><span>🧮</span><label>Calculator</label></div>
+<div class="icon" id="icon-paint" style="top:20px; left:180px;"><span>🎨</span><label>Paint</label></div>
+<div class="icon" id="icon-files" style="top:20px; left:260px;"><span>📁</span><label>Files</label></div>
+<div class="icon" id="icon-terminal" style="top:100px; left:20px;"><span>📟</span><label>Terminal</label></div>
+<div class="icon" id="icon-clock" style="top:20px; left:340px;"><span>🕒</span><label>Clock</label></div>
+
+<div id="files-app" class="app-window"><div class="app-header">Files<button class="app-close-btn" id="files-app-close">×</button></div><div id="files-list"></div></div>
+<div id="text-app" class="app-window" style="display:none; top:120px; left:120px; width: 400px; height: 300px;"><div class="app-header">Notepad<button class="app-close-btn" id="text-app-close">×</button></div><textarea></textarea></div>
+<div id="calc-app" class="app-window" style="top:120px; left:120px; display:none; width: 250px;"><div class="app-header">Calculator<button class="app-close-btn" id="calc-app-close">×</button></div><input type="text" id="calc-display" readonly /><div id="calc-buttons"><button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn">/</button><button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn">*</button><button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn">-</button><button class="calc-btn">0</button><button class="calc-btn">.</button><button id="calc-equal">=</button><button class="calc-btn">+</button><button id="calc-clear">CLEAR</button></div></div>
+<div id="paint-app" class="app-window" style="width:500px; height:400px; display:none; top:140px; left:140px;"><div class="app-header">Paint<button class="app-close-btn" id="paint-app-close">×</button></div><canvas id="paint-canvas" width="480" height="320" style="margin:10px; border:1px solid #999; border-radius:4px; cursor:crosshair;"></canvas><div id="paint-toolbar" style="display:flex; gap:10px; padding:0 10px 5px 10px; align-items:center;"><input type="color" id="paint-color" value="#000000" /><button id="paint-clear-btn">Clear</button></div></div>
+
+<div id="terminal-app" class="app-window" style="display:none; top:160px; left:160px; width:500px; height:350px; flex-direction:column;">
+  <div class="app-header">Terminal<button class="app-close-btn" id="terminal-app-close">×</button></div>
+  <div id="terminal-output" style="flex-grow:1; background:black; color:lime; padding:5px; overflow-y:auto;">
+    Windows123 OS Terminal© Help: help<br>
+  </div>
+  <input id="terminal-input" type="text" style="border:none; outline:none; font-size:14px; background:black; color:lime; padding:5px;" placeholder="Type command..." />
+</div>
+
+<div id="clock-app" class="app-window" style="display:none; width:300px; height:200px; top:150px; left:150px;">
+  <div class="app-header">
+    Clock
+    <button class="app-close-btn" id="clock-app-close">×</button>
+  </div>
+  <div class="window-content" style="text-align:center; color:black; background:white; font-family:monospace; flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <div id="clock-time" style="font-size:40px; margin-bottom:10px;">loading</div>
+    <div id="clock-date" style="font-size:18px;">.....</div>
+  </div>
+</div>
+
+
+<div id="start-menu"><button id="btn-lock">Lock</button><button id="btn-restart">Restart</button><button id="btn-turnoff">Shutdown</button></div>
+<div id="taskbar"><div id="start-button" title="Start"><img src="Pictures/SirTros-logo.png" alt="SirTros Logo" /></div><div id="datetime"><div id="time">00:00</div><div id="date">--/--/--</div></div></div>
+<div id="toastContainer"></div>
+<div id="volume-toast">🔊 50%</div>
+
+<script>
+const iconFiles=document.getElementById('icon-files'),iconText=document.getElementById('icon-text'),iconCalc=document.getElementById('icon-calc'),iconPaint=document.getElementById('icon-paint'),iconTerminal=document.getElementById('icon-terminal');
+const filesApp=document.getElementById('files-app'),textApp=document.getElementById('text-app'),calcApp=document.getElementById('calc-app'),paintApp=document.getElementById('paint-app'),terminalApp=document.getElementById('terminal-app');
+const textArea=textApp.querySelector('textarea'),filesList=document.getElementById('files-list');
+const appsForFiles=[{name:'Files',icon:'📁',appEl:filesApp},{name:'Text Document',icon:'📄',appEl:textApp},{name:'Calculator',icon:'🧮',appEl:calcApp},{name:'Paint',icon:'🎨',appEl:paintApp},{name:'Terminal',icon:'📟',appEl:terminalApp}];
+
+window.addEventListener('load',()=>{const savedText=localStorage.getItem('textDocument');if(savedText)textArea.value=savedText;populateFilesApp();});
+textArea.addEventListener('input',()=>{localStorage.setItem('textDocument',textArea.value);});
+function populateFilesApp(){filesList.innerHTML='';appsForFiles.forEach(app=>{const fileIcon=document.createElement('div');fileIcon.className='file-icon';fileIcon.title=app.name;fileIcon.innerHTML=`<span>${app.icon}</span><label>${app.name}</label>`;fileIcon.onclick=()=>showApp(app.appEl);filesList.appendChild(fileIcon);});}
+iconFiles.ondblclick=()=>showApp(filesApp);iconText.ondblclick=()=>showApp(textApp);iconCalc.ondblclick=()=>showApp(calcApp);iconPaint.ondblclick=()=>showApp(paintApp);iconTerminal.ondblclick=()=>showApp(terminalApp);
+document.getElementById('files-app-close').onclick=()=>filesApp.style.display='none';
+document.getElementById('text-app-close').onclick=()=>textApp.style.display='none';
+document.getElementById('calc-app-close').onclick=()=>calcApp.style.display='none';
+document.getElementById('paint-app-close').onclick=()=>paintApp.style.display='none';
+document.getElementById('terminal-app-close').onclick=()=>terminalApp.style.display='none';
+function showApp(app){[filesApp,textApp,calcApp,paintApp,terminalApp].forEach(a=>a.style.display='none');app.style.display='flex';bringToFront(app);}
+function makeDraggable(el){const header=el.querySelector('.app-header');if(!header)return;header.addEventListener('mousedown',e=>{let offsetX=e.clientX-el.offsetLeft,offsetY=e.clientY-el.offsetTop;bringToFront(el);function onMouseMove(e){el.style.left=(e.clientX-offsetX)+'px';el.style.top=(e.clientY-offsetY)+'px';}function onMouseUp(){document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp);}document.addEventListener('mousemove',onMouseMove);document.addEventListener('mouseup',onMouseUp);});}
+[filesApp,textApp,calcApp,paintApp,terminalApp].forEach(makeDraggable);
+function bringToFront(el){const highestZ=Array.from(document.querySelectorAll('.app-window')).map(e=>parseInt(getComputedStyle(e).zIndex)||0).reduce((max,z)=>Math.max(max,z),1000);el.style.zIndex=highestZ+1;}
+
+/* Kalkulačka */
+const calcDisplay=document.getElementById('calc-display');let currentInput='';
+document.querySelectorAll('.calc-btn').forEach(btn=>btn.onclick=()=>{currentInput+=btn.textContent;calcDisplay.value=currentInput;});
+document.getElementById('calc-equal').onclick=()=>{try{let expression=currentInput.replace(',','.');let result=Function(`'use strict'; return (${expression})`)();calcDisplay.value=result;currentInput=result.toString();}catch{calcDisplay.value='ERROR';currentInput='';}};
+document.getElementById('calc-clear').onclick=()=>{currentInput='';calcDisplay.value='';};
+
+/* Clock */
+const clockApp = document.getElementById('clock-app');
+const clockTime = document.getElementById('clock-time');
+const clockDate = document.getElementById('clock-date');
+const clockIcon = document.getElementById('icon-clock');
+
+clockIcon.ondblclick = () => {
+    showApp(clockApp);
+    updateClock();
+};
+
+document.getElementById('clock-app-close').onclick = () => clockApp.style.display = 'none';
+
+function updateClock() {
+    const now = new Date();
+    clockTime.textContent = now.toLocaleTimeString("en-GB");
+    clockDate.textContent = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+
+setInterval(() => { if(clockApp.style.display === 'flex') updateClock(); }, 1000);
+
+// Přidat Clock do draggable seznamu
+makeDraggable(clockApp);
+
+/* Paint */
+const canvas = document.getElementById('paint-canvas');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+let lastX = 0;
+let lastY = 0;
+const colorPicker = document.getElementById('paint-color');
+
+function savePaintToLocalStorage() {
+    localStorage.setItem('paintImage', canvas.toDataURL());
+}
+
+function loadPaintFromLocalStorage() {
+    let data = localStorage.getItem('paintImage');
+    if (data) {
+        let img = new Image();
+        img.onload = () => { ctx.drawImage(img, 0, 0); };
+        img.src = data;
+    }
+}
+
+// Start drawing
+canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+});
+
+// Drawing while moving mouse with left button pressed
+canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+});
+
+// Stop drawing
+canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    savePaintToLocalStorage();
+});
+canvas.addEventListener('mouseout', () => { drawing = false; });
+
+document.getElementById('paint-clear-btn').onclick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    localStorage.removeItem('paintImage');
+};
+
+loadPaintFromLocalStorage();
+
+/* Start Menu */
+const startButton = document.getElementById('start-button'),
+      startMenu = document.getElementById('start-menu');
+
+startButton.onclick = () => {
+    startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex';
+};
+
+document.getElementById('btn-restart').onclick = (event) => {
+    if (event.shiftKey) { window.location.href = 'SOM.html'; }
+    else { window.location.href = 'Restartovani.html'; }
+};
+document.getElementById('btn-lock').onclick = () => window.location.href = 'Zamykani.html';
+// Jen pro Shutdown tlačítko
+document.getElementById('btn-turnoff').onclick = () => {
+    const audio = new Audio('Sounds/Shutdown.wav');
+    audio.play();
+    window.location.href = 'Vypinani.html';
+};
+
+/* Datum a čas */
+function updateDateTime(){const now=new Date();document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});document.getElementById('date').textContent=now.toLocaleDateString();}
+setInterval(updateDateTime,1000);updateDateTime();
+
+/* --- Fast Black Toast + Modal with Colored Buttons --- */
+function showFastToast() {
+  const container = document.getElementById('toastContainer');
+  
+  // Toast
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.background = 'black';
+  toast.style.color = 'white';
+  toast.style.padding = '10px 15px';
+  toast.style.borderRadius = '8px';
+  toast.style.fontFamily = 'Arial, sans-serif';
+  toast.style.display = 'flex';
+  toast.style.flexDirection = 'column';
+  toast.style.maxWidth = '300px';
+  toast.style.marginBottom = '10px';
+  toast.style.opacity = '1';
+  
+  // Text
+  const textDiv = document.createElement('div');
+  textDiv.textContent = 'Terminal app in Windows123 operating system!';
+  textDiv.style.fontWeight = 'bold';
+  textDiv.style.fontSize = '14px';
+  toast.appendChild(textDiv);
+
+  // Spacing
+  const spacer = document.createElement('div');
+  spacer.style.height = '10px';
+  toast.appendChild(spacer);
+
+  // Run button
+  const runBtn = document.createElement('button');
+  runBtn.textContent = 'Run';
+  runBtn.style.marginTop = '10px';
+  runBtn.style.padding = '6px 12px';
+  runBtn.style.border = 'none';
+  runBtn.style.borderRadius = '5px';
+  runBtn.style.background = 'white';
+  runBtn.style.color = 'black';
+  runBtn.style.fontWeight = 'bold';
+  runBtn.style.cursor = 'pointer';
+  runBtn.onclick = () => {
+    toast.remove();
+    openBlackModal();
+  };
+  toast.appendChild(runBtn);
+
+  container.appendChild(toast);
+
+  // Toast zmizí (10s)
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.3s';
+    toast.style.opacity = 0;
+    setTimeout(() => { if (toast.parentNode) container.removeChild(toast); }, 2000);
+  }, 10000);
+}
+
+/* --- Black Modal with Green/Red Buttons --- */
+function openBlackModal() {
+  // Sound
+  const audio = new Audio('Sounds/Window.wav');
+  audio.play();
+
+  // Overlay
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.background = 'rgba(0,0,0,0.5)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = 50000;
+
+  // Modal box (black toast style)
+  const modal = document.createElement('div');
+  modal.style.background = 'black';
+  modal.style.padding = '20px';
+  modal.style.borderRadius = '8px';
+  modal.style.width = '300px';
+  modal.style.textAlign = 'center';
+  modal.style.color = 'white';
+  modal.style.fontFamily = 'Arial, sans-serif';
+
+  // Text
+  const modalText = document.createElement('div');
+  modalText.textContent = 'Do you want to run this application?';
+  modalText.style.marginBottom = '15px';
+  modal.appendChild(modalText);
+
+  // Yes button (green)
+  const btnYes = document.createElement('button');
+  btnYes.textContent = 'Yes';
+  btnYes.style.margin = '0 10px';
+  btnYes.style.padding = '8px 16px';
+  btnYes.style.background = 'green';
+  btnYes.style.color = 'white';
+  btnYes.style.border = 'none';
+  btnYes.style.borderRadius = '5px';
+  btnYes.style.cursor = 'pointer';
+  btnYes.onclick = () => {
+    document.body.removeChild(overlay);
+    try {
+      showApp(terminalApp); // musí být definován
+    } catch {
+    }
+  };
+
+  // No button (red)
+  const btnNo = document.createElement('button');
+  btnNo.textContent = 'No';
+  btnNo.style.margin = '0 10px';
+  btnNo.style.padding = '8px 16px';
+  btnNo.style.background = 'red';
+  btnNo.style.color = 'white';
+  btnNo.style.border = 'none';
+  btnNo.style.borderRadius = '5px';
+  btnNo.style.cursor = 'pointer';
+  btnNo.onclick = () => document.body.removeChild(overlay);
+
+  modal.appendChild(btnYes);
+  modal.appendChild(btnNo);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Zavolání toastu
+showFastToast();
+
+/* TERMINÁL */
+const terminalInput=document.getElementById('terminal-input');
+const terminalOutput=document.getElementById('terminal-output');
+const commands=['help','run (app)','time','date','shutdown','restart','lock','echo (text)','about','apps','update','bsod','som'];
+terminalInput.addEventListener('keydown',e=>{if(e.key==='Enter'){const cmd=terminalInput.value.trim();terminalInput.value='';handleTerminalCommand(cmd);}});
+function printTerminal(text){terminalOutput.innerHTML+='<br>'+text;terminalOutput.scrollTop=terminalOutput.scrollHeight;}
+
+/* Hlavní CMD handler */
+function handleTerminalCommand(cmd){
+  if(!cmd) return;
+  const parts = cmd.split(" ");
+  const main = parts[0];
+  const arg = parts.slice(1).join(" ");
+  switch(main.toLowerCase()){
+    case 'help': printTerminal('Commands: '+commands.join(', ')); break;
+    case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
+    case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
+    case 'about': printTerminal('Windows123 OS 1.0'); break;
+	case 'update': printTerminal('Windows123 All OK.'); break;
+    case 'apps': printTerminal('Apps: Notepad.exe, Calculator.exe, Paint.exe, Clock.exe, Files.exe'); break;
+    case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
+
+    case 'run':
+      const argParts = arg.split(" ");
+      const appName = argParts[0].toLowerCase();
+      const appParam = argParts.slice(1).join(" ");
+      switch(appName){
+        case 'notepad.exe':
+          showApp(textApp);
+          if(appParam) textArea.value = appParam;
+          break;
+        case 'calculator.exe':
+          showApp(calcApp);
+          if(appParam){
+            try{
+              let result = Function('"use strict"; return (' + appParam + ')')();
+              calcDisplay.value = result;
+              currentInput = result.toString();
+            }catch{
+              calcDisplay.value='ERROR'; currentInput='';
+            }
+          }
+          break;
+        case 'paint.exe': showApp(paintApp); break;
+		case 'clock.exe': showApp(clockApp); break;
+        case 'files.exe': showApp(filesApp); break;
+        case 'terminal.exe': showApp(terminalApp); break;
+        default: printTerminal('Unknown app: '+appName);
+      }
+      break;
+
+    case 'shutdown': window.location.href='Vypinani.html'; break;
+    case 'restart': window.location.href='Restartovani.html'; break;
+	case 'bsod': window.location.href='Error.html'; break;
+	case 'som': window.location.href='SOM.html'; break;
+    case 'lock': window.location.href='Zamykani.html'; break;
+    default: printTerminal('Unknown command: '+main);
+  }
+}
+
+/* Globální funkce pro Chrome Console */
+window.runCmdFromConsole = function(cmd){
+    handleTerminalCommand(cmd);
+    console.log('Command executed in Windows123 CMD: ' + cmd);
+};
+
+// --- E key spam detection ---
+let eCounter = 0;
+
+document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'e') {
+        eCounter++;
+        if (eCounter >= 5) {
+            window.location.href = 'Black.html';
+        }
+    }
+});
+
+</script>
+</body>
+</html>

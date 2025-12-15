@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Loading</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: white;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      cursor: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .logo, .spinner {
+      width: 150px;
+      height: 150px;
+      transition: opacity 0.5s ease;
+      opacity: 1;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .spinner {
+      border: 8px solid #ffffff30;
+      border-top: 8px solid #0078D7;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes spin {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      100% { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    .loading-text {
+      position: absolute;
+      top: 60%;
+      font-size: 60px;
+      font-weight: bold;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    #fade-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #008000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 9999;
+    }
+
+    #fade-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Bold text dole */
+    .bios-text {
+      position: absolute;
+      bottom: 20px;
+      font-weight: bold;
+      font-size: 20px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://d6eb232077.cbaul-cdnwnd.com/c0848f8596b3a88e364a38be6010cdc1/200000015-5091150912/450/SirTros-logo.webp" alt="SirTros logo" class="logo" id="logo" />
+  <div class="spinner" id="spinner"></div>
+
+  <div class="loading-text">LOADING</div>
+  <div id="fade-overlay"></div>
+
+  <!-- Bold text dole -->
+  <div class="bios-text" style="font-size: 20px;">
+  </div>
+
+  <script>
+    const logo = document.getElementById("logo");
+    const spinner = document.getElementById("spinner");
+    const overlay = document.getElementById("fade-overlay");
+
+    // postupné zobrazení loga a spinneru
+    setTimeout(() => {
+      logo.style.opacity = 0;
+      setTimeout(() => {
+        spinner.style.opacity = 1;
+      }, 500);
+    }, 3500);
+
+    // po určité době přidáme zelený overlay a přesměrujeme
+    setTimeout(() => {
+      spinner.style.opacity = 0;
+      overlay.classList.add('active');
+      setTimeout(() => {
+        window.location.href = "Prihlaseni.html";
+      }, 1000);
+    }, 14500);
+
+    // F10 detekce byla odstraněna, takže už nelze otevřít Bios-menu.html
+  </script>
+</body>
+</html>

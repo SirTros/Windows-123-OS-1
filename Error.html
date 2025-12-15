@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<title>Error</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background-color: #0a48ce;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* zakáže scroll */
+    color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    cursor: none;
+    user-select: none;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* nahoře */
+    align-items: flex-start;
+    padding: 40px 80px 20px 80px; /* méně paddingu zdola, víc nahoře */
+    font-size: 1.2em;
+    line-height: 1.6;
+  }
+  #content {
+    display: none;
+  }
+  .emoji {
+    font-size: 5em;
+    margin-bottom: 30px;
+  }
+  .percent {
+    margin-top: 50px;
+    font-family: Consolas, monospace;
+    white-space: nowrap;
+  }
+  .qr {
+    margin-top: 40px;
+  }
+  .qr img {
+    width: 150px;
+    height: 150px;
+  }
+  .qr a {
+    color: #00a2ed;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin-top: 10px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body onwheel="return false;" onscroll="window.scrollTo(0,0);">
+  <div id="content">
+    <div class="emoji">:(</div>
+    <div>Your PC ran intp a problem and needs to restart. We're</div>
+    <div>just collecting some error info, and then we'll restart for</div>
+	<div>you.</div>
+    <div class="percent" id="percent">0% complete</div>
+
+    <div class="qr">
+      <img src="https://d6eb232077.cbaul-cdnwnd.com/c0848f8596b3a88e364a38be6010cdc1/200000013-d49f8d49f9/03b17b5a24a53e66ec63199a4f66d6c6.webp" alt="QR code Microsoft" />
+    </div>
+  </div>
+
+  <audio id="errorSound" src="https://www.myinstants.com/media/sounds/windows-xp-error.mp3" preload="auto"></audio>
+
+<script>
+  const content = document.getElementById('content');
+  const percent = document.getElementById('percent');
+  const errorSound = document.getElementById('errorSound');
+  let progress = 0;
+  let intervalId = null;
+
+  function startProgress() {
+    if (content.style.display === 'block') return;
+
+    content.style.display = 'block';
+    errorSound.play();
+
+    intervalId = setInterval(() => {
+      progress += 10;
+      if (progress > 100) {
+        clearInterval(intervalId);
+        window.location.href = 'Restartovani.html';
+      } else {
+        percent.textContent = progress + '% complete';
+      }
+    }, 6000);
+  }
+
+  // Spustit hned po načtení stránky
+  window.addEventListener('load', () => {
+    startProgress();
+  });
+
+  // Zamezení scrollování klávesnicí (PageUp, PageDown, šipky a mezerník)
+  window.addEventListener('keydown', e => {
+    const keysToPrevent = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', 'Space'];
+    if (keysToPrevent.includes(e.code)) {
+      e.preventDefault();
+    }
+  });
+
+  // Drž scroll stále nahoře
+  window.scrollTo(0,0);
+</script>
+</body>
+</html>
