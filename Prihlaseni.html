@@ -1,127 +1,139 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Login Windows123</title>
-
 <style>
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: #008000;
-  color: white;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background-color: #008000; color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; user-select: none;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    position: relative;
+  }
+  #time { font-size: 80px; font-weight: 600; }
+  #date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
 
-#time { font-size: 80px; font-weight: 600; }
-#date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
+  #pcButton {
+    position: fixed; right: 20px; bottom: 20px;
+    font-size: 28px;
+    background: #008000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  #pcButton:hover { background: #00a000; }
 
-#pcButton {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  font-size: 28px;
-  background: #008000;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-#pcButton:hover { background: #00a000; }
+  #startMenu {
+    position: fixed; bottom: 60px; right: 20px;
+    width: 200px;
+    background: #222;
+    border: 2px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 50;
+  }
+  #startMenu.active { display: flex; }
+  #startMenu h3 { margin: 0; padding: 12px; background: #333; font-size: 18px; border-bottom: 1px solid #444; text-align: center; }
+  .start-item { padding: 12px 15px; cursor: pointer; font-size: 16px; transition: background 0.2s; }
+  .start-item:hover { background: #444; }
 
-#startMenu {
-  position: fixed;
-  bottom: 60px;
-  right: 20px;
-  width: 200px;
-  background: #222;
-  border-radius: 10px;
-  display: none;
-  flex-direction: column;
-  z-index: 50;
-}
-#startMenu.active { display: flex; }
+  #overlay {
+    position: fixed; left: 0; bottom: -100%;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    transition: bottom 0.5s ease;
+  }
+  #overlay.active { bottom: 0; }
+  #closeBar { position: absolute; top: 0; left: 0; width: 100%; height: 60px; background: #333; color: white; text-align: center; line-height: 60px; font-size: 20px; cursor: grab; user-select: none; }
+  #closeBar:active { cursor: grabbing; }
 
-.start-item {
-  padding: 12px;
-  cursor: pointer;
-}
-.start-item:hover { background: #444; }
+  #userImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    object-fit: cover;
+    border: 2px solid white;
+    background-color: white;
+    padding: 5px;
+  }
 
-#overlay {
-  position: fixed;
-  left: 0;
-  bottom: -100%;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: bottom 0.5s;
-}
-#overlay.active { bottom: 0; }
+  #userName {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 30px;
+  }
 
-#userImage {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 20px;
-}
+  #signInBtn {
+    font-size: 24px;
+    padding: 12px 30px;
+    border-radius: 6px;
+    border: none;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #signInBtn:hover { background-color: #eee; }
 
-#signInBtn {
-  font-size: 24px;
-  padding: 12px 30px;
-  cursor: pointer;
-}
+  #confirmOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 150;
+    pointer-events: auto;
+  }
 
-#blackScreen {
-  position: fixed;
-  inset: 0;
-  background: black;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  opacity: 0;
-  transition: opacity 1s;
-  z-index: 999;
-}
-#blackScreen.show {
-  display: flex;
-  opacity: 1;
-}
+  #confirmBox {
+    background: black; color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    min-width: 300px;
+    z-index: 200;
+  }
+  #confirmBox p { margin-bottom: 20px; font-size: 18px; text-align: center; }
+  #confirmBox .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  #confirmBox button { padding: 8px 16px; font-size: 16px; cursor: pointer; border-radius: 6px; border: none; }
+  #confirmBox button.yes { background: green; color: white; }
+  #confirmBox button.no { background: red; color: white; }
 
-.loader {
-  border: 5px solid #333;
-  border-top: 5px solid white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-#welcomeText {
-  font-size: 50px;
-  font-weight: 600;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+  #blackScreen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: black; color: white; display: none;
+    justify-content: center; align-items: center; flex-direction: column;
+    z-index: 999; opacity: 0; transition: opacity 1s;
+  }
+  #blackScreen.show { display: flex; opacity: 1; }
+  #blackScreen .loader { border: 5px solid #333; border-top: 5px solid white; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+  #blackScreen div:last-child { font-size: 50px; font-weight: 600; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 </head>
-
 <body>
 
 <div id="time"></div>
@@ -130,60 +142,133 @@ body, html {
 <div id="pcButton">⏻</div>
 
 <div id="startMenu">
-  <div class="start-item">Shutdown</div>
+  <h3>Start</h3>
+  <div class="start-item" data-action="shutdown">Shutdown</div>
+  <div class="start-item" data-action="restart">Restart</div>
 </div>
 
 <div id="overlay">
-  <img id="userImage" src="Pictures/User.png">
+  <div id="closeBar">Drag down to close</div>
+  <img id="userImage" src="Pictures/User.png" alt="User" />
+  <div id="userName">USER</div>
   <button id="signInBtn">Sign in</button>
 </div>
 
 <div id="blackScreen">
   <div class="loader"></div>
-  <div id="welcomeText">Welcome</div>
+  <div>Welcome</div>
+</div>
+
+<div id="confirmOverlay">
+  <div id="confirmBox">
+    <p id="confirmText">Do you want to shutdown the computer?</p>
+    <div class="buttons">
+      <button class="yes">YES</button>
+      <button class="no">NO</button>
+    </div>
+  </div>
 </div>
 
 <audio id="welcomeSound" src="Sounds/Welcome.wav" preload="auto"></audio>
+<audio id="windowSound" src="Sounds/Window.wav" preload="auto"></audio>
 
 <script>
-const timeEl = document.getElementById("time");
-const dateEl = document.getElementById("date");
-const pcButton = document.getElementById("pcButton");
-const startMenu = document.getElementById("startMenu");
-const overlay = document.getElementById("overlay");
-const signInBtn = document.getElementById("signInBtn");
-const blackScreen = document.getElementById("blackScreen");
-const welcomeSound = document.getElementById("welcomeSound");
+const timeEl = document.getElementById('time');
+const dateEl = document.getElementById('date');
+const pcButton = document.getElementById('pcButton');
+const startMenu = document.getElementById('startMenu');
+const overlay = document.getElementById('overlay');
+const signInBtn = document.getElementById('signInBtn');
+const closeBar = document.getElementById('closeBar');
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmBox = document.getElementById('confirmBox');
+const confirmText = document.getElementById('confirmText');
+const yesBtn = confirmBox.querySelector('.yes');
+const noBtn = confirmBox.querySelector('.no');
+const blackScreen = document.getElementById('blackScreen');
+const welcomeSound = document.getElementById('welcomeSound');
+const windowSound = document.getElementById('windowSound');
 
-// čas
+// čas a datum
 function updateTime() {
-  const n = new Date();
-  timeEl.textContent =
-    String(n.getHours()).padStart(2,"0") + ":" +
-    String(n.getMinutes()).padStart(2,"0");
-  dateEl.textContent =
-    n.getDate() + "." + (n.getMonth()+1) + "." + n.getFullYear();
+  const now = new Date();
+  timeEl.textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 setInterval(updateTime, 1000);
 updateTime();
 
-// start menu
-pcButton.onclick = () => startMenu.classList.toggle("active");
+// Start menu toggle
+pcButton.addEventListener('click', () => startMenu.classList.toggle('active'));
+document.addEventListener('click', e => {
+  if(!startMenu.contains(e.target) && !pcButton.contains(e.target))
+    startMenu.classList.remove('active');
+});
 
-// sign in → welcome + zvuk
-signInBtn.onclick = () => {
-  overlay.style.display = "none";
-  blackScreen.classList.add("show");
+// Drag overlay up/down
+let startY=null, dragging=false;
+document.addEventListener('mousedown', e=>{startY=e.clientY; dragging=true;});
+document.addEventListener('mousemove', e=>{
+  if(dragging && startY-e.clientY>80){
+    overlay.classList.add('active');
+    dragging=false;
+  } else if(dragging && startY-e.clientY<-80){
+    overlay.classList.remove('active');
+    dragging=false;
+  }
+});
+document.addEventListener('mouseup', ()=>{dragging=false; startY=null;});
+document.addEventListener('touchstart', e=>{startY=e.touches[0].clientY; dragging=true;});
+document.addEventListener('touchmove', e=>{
+  if(dragging && startY-e.touches[0].clientY>80){
+    overlay.classList.add('active');
+    dragging=false;
+  } else if(dragging && startY-e.touches[0].clientY<-80){
+    overlay.classList.remove('active');
+    dragging=false;
+  }
+});
+document.addEventListener('touchend', ()=>{dragging=false; startY=null;});
 
-  setTimeout(() => {
-    welcomeSound.currentTime = 0;
-    welcomeSound.play().catch(()=>{});
-  }, 300);
+// Drag down to close
+let dragStartY=null;
+closeBar.addEventListener('mousedown', e=>{
+  dragStartY=e.clientY;
+  const onMouseUp=ev=>{
+    if(dragStartY!==null && ev.clientY-dragStartY>80) overlay.classList.remove('active');
+    document.removeEventListener('mouseup', onMouseUp);
+    dragStartY=null;
+  };
+  document.addEventListener('mouseup', onMouseUp);
+});
 
-  setTimeout(() => {
-    window.location.href = "Plocha.html";
-  }, 5000);
-};
+// Sign in button
+signInBtn.addEventListener('click', ()=>{
+  overlay.style.display = 'none';
+  blackScreen.classList.add('show');
+  welcomeSound.play();
+  setTimeout(()=>{ window.location.href = 'Plocha.html'; },5000);
+});
+
+// Start menu items -> confirm modal
+startMenu.querySelectorAll('.start-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const action = item.getAttribute('data-action');
+    confirmOverlay.style.display='flex';
+    windowSound.play();
+    confirmText.textContent = action==='shutdown'
+      ? "Do you want to shutdown the computer?"
+      : "Do you want to restart the computer?";
+    yesBtn.onclick = ()=>{
+      window.location.href = action==='shutdown' ? 'Vypinani.html' : 'Restartovani.html';
+    };
+    noBtn.onclick = ()=>{
+      confirmOverlay.style.display='none';
+      startMenu.classList.remove('active');
+    };
+  });
+});
 </script>
 
 </body>
