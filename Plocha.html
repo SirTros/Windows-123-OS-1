@@ -83,43 +83,135 @@ body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,san
 <div id="volume-toast">🔊 50%</div>
 
 <script>
-const iconFiles=document.getElementById('icon-files'),iconText=document.getElementById('icon-text'),iconCalc=document.getElementById('icon-calc'),iconPaint=document.getElementById('icon-paint'),iconTerminal=document.getElementById('icon-terminal');
-const filesApp=document.getElementById('files-app'),textApp=document.getElementById('text-app'),calcApp=document.getElementById('calc-app'),paintApp=document.getElementById('paint-app'),terminalApp=document.getElementById('terminal-app');
-const textArea=textApp.querySelector('textarea'),filesList=document.getElementById('files-list');
-const appsForFiles=[{name:'Files',icon:'📁',appEl:filesApp},{name:'Text Document',icon:'📄',appEl:textApp},{name:'Calculator',icon:'🧮',appEl:calcApp},{name:'Paint',icon:'🎨',appEl:paintApp},{name:'Terminal',icon:'📟',appEl:terminalApp}];
+const iconFiles = document.getElementById('icon-files'),
+      iconText = document.getElementById('icon-text'),
+      iconCalc = document.getElementById('icon-calc'),
+      iconPaint = document.getElementById('icon-paint'),
+      iconTerminal = document.getElementById('icon-terminal'),
+      iconClock = document.getElementById('icon-clock');
 
-window.addEventListener('load',()=>{const savedText=localStorage.getItem('textDocument');if(savedText)textArea.value=savedText;populateFilesApp();});
-textArea.addEventListener('input',()=>{localStorage.setItem('textDocument',textArea.value);});
-function populateFilesApp(){filesList.innerHTML='';appsForFiles.forEach(app=>{const fileIcon=document.createElement('div');fileIcon.className='file-icon';fileIcon.title=app.name;fileIcon.innerHTML=`<span>${app.icon}</span><label>${app.name}</label>`;fileIcon.onclick=()=>showApp(app.appEl);filesList.appendChild(fileIcon);});}
-iconFiles.ondblclick=()=>showApp(filesApp);iconText.ondblclick=()=>showApp(textApp);iconCalc.ondblclick=()=>showApp(calcApp);iconPaint.ondblclick=()=>showApp(paintApp);iconTerminal.ondblclick=()=>showApp(terminalApp);
-document.getElementById('files-app-close').onclick=()=>filesApp.style.display='none';
-document.getElementById('text-app-close').onclick=()=>textApp.style.display='none';
-document.getElementById('calc-app-close').onclick=()=>calcApp.style.display='none';
-document.getElementById('paint-app-close').onclick=()=>paintApp.style.display='none';
-document.getElementById('terminal-app-close').onclick=()=>terminalApp.style.display='none';
-function showApp(app){[filesApp,textApp,calcApp,paintApp,terminalApp].forEach(a=>a.style.display='none');app.style.display='flex';bringToFront(app);}
-function makeDraggable(el){const header=el.querySelector('.app-header');if(!header)return;header.addEventListener('mousedown',e=>{let offsetX=e.clientX-el.offsetLeft,offsetY=e.clientY-el.offsetTop;bringToFront(el);function onMouseMove(e){el.style.left=(e.clientX-offsetX)+'px';el.style.top=(e.clientY-offsetY)+'px';}function onMouseUp(){document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp);}document.addEventListener('mousemove',onMouseMove);document.addEventListener('mouseup',onMouseUp);});}
-[filesApp,textApp,calcApp,paintApp,terminalApp].forEach(makeDraggable);
-function bringToFront(el){const highestZ=Array.from(document.querySelectorAll('.app-window')).map(e=>parseInt(getComputedStyle(e).zIndex)||0).reduce((max,z)=>Math.max(max,z),1000);el.style.zIndex=highestZ+1;}
+const filesApp = document.getElementById('files-app'),
+      textApp = document.getElementById('text-app'),
+      calcApp = document.getElementById('calc-app'),
+      paintApp = document.getElementById('paint-app'),
+      terminalApp = document.getElementById('terminal-app'),
+      clockApp = document.getElementById('clock-app');
 
-/* Kalkulačka */
-const calcDisplay=document.getElementById('calc-display');let currentInput='';
-document.querySelectorAll('.calc-btn').forEach(btn=>btn.onclick=()=>{currentInput+=btn.textContent;calcDisplay.value=currentInput;});
-document.getElementById('calc-equal').onclick=()=>{try{let expression=currentInput.replace(',','.');let result=Function(`'use strict'; return (${expression})`)();calcDisplay.value=result;currentInput=result.toString();}catch{calcDisplay.value='ERROR';currentInput='';}};
-document.getElementById('calc-clear').onclick=()=>{currentInput='';calcDisplay.value='';};
+const textArea = textApp.querySelector('textarea'),
+      filesList = document.getElementById('files-list');
 
-/* Clock */
-const clockApp = document.getElementById('clock-app');
-const clockTime = document.getElementById('clock-time');
-const clockDate = document.getElementById('clock-date');
-const clockIcon = document.getElementById('icon-clock');
+const appsForFiles = [
+    {name:'Files', icon:'📁', appEl: filesApp},
+    {name:'Text Document', icon:'📄', appEl: textApp},
+    {name:'Calculator', icon:'🧮', appEl: calcApp},
+    {name:'Paint', icon:'🎨', appEl: paintApp},
+    {name:'Terminal', icon:'📟', appEl: terminalApp},
+    {name:'Clock', icon:'🕒', appEl: clockApp}
+];
 
-clockIcon.ondblclick = () => {
-    showApp(clockApp);
-    updateClock();
+// --- Load saved text and populate Files app ---
+window.addEventListener('load', () => {
+    const savedText = localStorage.getItem('textDocument');
+    if(savedText) textArea.value = savedText;
+    populateFilesApp();
+});
+
+textArea.addEventListener('input', () => {
+    localStorage.setItem('textDocument', textArea.value);
+});
+
+function populateFilesApp() {
+    filesList.innerHTML = '';
+    appsForFiles.forEach(app => {
+        const fileIcon = document.createElement('div');
+        fileIcon.className = 'file-icon';
+        fileIcon.title = app.name;
+        fileIcon.innerHTML = `<span>${app.icon}</span><label>${app.name}</label>`;
+        fileIcon.onclick = () => showApp(app.appEl);
+        filesList.appendChild(fileIcon);
+    });
+}
+
+// --- Desktop icons double-click ---
+iconFiles.ondblclick = () => showApp(filesApp);
+iconText.ondblclick = () => showApp(textApp);
+iconCalc.ondblclick = () => showApp(calcApp);
+iconPaint.ondblclick = () => showApp(paintApp);
+iconTerminal.ondblclick = () => showApp(terminalApp);
+iconClock.ondblclick = () => { showApp(clockApp); updateClock(); };
+
+// --- Close buttons ---
+document.getElementById('files-app-close').onclick = () => filesApp.style.display='none';
+document.getElementById('text-app-close').onclick = () => textApp.style.display='none';
+document.getElementById('calc-app-close').onclick = () => calcApp.style.display='none';
+document.getElementById('paint-app-close').onclick = () => paintApp.style.display='none';
+document.getElementById('terminal-app-close').onclick = () => terminalApp.style.display='none';
+document.getElementById('clock-app-close').onclick = () => clockApp.style.display='none';
+
+// --- Show app (all apps can be open without limit) ---
+function showApp(app) {
+    if(app.style.display === 'flex') return; // Already open
+    app.style.display = 'flex';
+    bringToFront(app);
+}
+
+// --- Draggable windows ---
+function makeDraggable(el) {
+    const header = el.querySelector('.app-header');
+    if(!header) return;
+    header.addEventListener('mousedown', e => {
+        let offsetX = e.clientX - el.offsetLeft,
+            offsetY = e.clientY - el.offsetTop;
+        bringToFront(el);
+        function onMouseMove(e) {
+            el.style.left = (e.clientX - offsetX) + 'px';
+            el.style.top = (e.clientY - offsetY) + 'px';
+        }
+        function onMouseUp() {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+}
+
+[filesApp, textApp, calcApp, paintApp, terminalApp, clockApp].forEach(makeDraggable);
+
+// --- Bring to front ---
+function bringToFront(el) {
+    const highestZ = Array.from(document.querySelectorAll('.app-window'))
+        .map(e => parseInt(getComputedStyle(e).zIndex) || 0)
+        .reduce((max, z) => Math.max(max, z), 1000);
+    el.style.zIndex = highestZ + 1;
+}
+
+// --- Calculator ---
+const calcDisplay = document.getElementById('calc-display');
+let currentInput = '';
+
+document.querySelectorAll('.calc-btn').forEach(btn => btn.onclick = () => {
+    currentInput += btn.textContent;
+    calcDisplay.value = currentInput;
+});
+
+document.getElementById('calc-equal').onclick = () => {
+    try {
+        let expression = currentInput.replace(',', '.');
+        let result = Function(`'use strict'; return (${expression})`)();
+        calcDisplay.value = result;
+        currentInput = result.toString();
+    } catch {
+        calcDisplay.value = 'ERROR';
+        currentInput = '';
+    }
 };
 
-document.getElementById('clock-app-close').onclick = () => clockApp.style.display = 'none';
+document.getElementById('calc-clear').onclick = () => { currentInput = ''; calcDisplay.value = ''; };
+
+// --- Clock ---
+const clockTime = document.getElementById('clock-time');
+const clockDate = document.getElementById('clock-date');
 
 function updateClock() {
     const now = new Date();
@@ -129,40 +221,26 @@ function updateClock() {
 
 setInterval(() => { if(clockApp.style.display === 'flex') updateClock(); }, 1000);
 
-// Přidat Clock do draggable seznamu
-makeDraggable(clockApp);
-
-/* Paint */
+// --- Paint ---
 const canvas = document.getElementById('paint-canvas');
 const ctx = canvas.getContext('2d');
-let drawing = false;
-let lastX = 0;
-let lastY = 0;
+let drawing = false, lastX = 0, lastY = 0;
 const colorPicker = document.getElementById('paint-color');
 
-function savePaintToLocalStorage() {
-    localStorage.setItem('paintImage', canvas.toDataURL());
-}
-
+function savePaintToLocalStorage() { localStorage.setItem('paintImage', canvas.toDataURL()); }
 function loadPaintFromLocalStorage() {
     let data = localStorage.getItem('paintImage');
-    if (data) {
+    if(data) {
         let img = new Image();
-        img.onload = () => { ctx.drawImage(img, 0, 0); };
+        img.onload = () => ctx.drawImage(img, 0, 0);
         img.src = data;
     }
 }
+loadPaintFromLocalStorage();
 
-// Start drawing
-canvas.addEventListener('mousedown', e => {
-    drawing = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-});
-
-// Drawing while moving mouse with left button pressed
+canvas.addEventListener('mousedown', e => { drawing = true; lastX = e.offsetX; lastY = e.offsetY; });
 canvas.addEventListener('mousemove', e => {
-    if (!drawing) return;
+    if(!drawing) return;
     ctx.strokeStyle = colorPicker.value;
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
@@ -170,265 +248,103 @@ canvas.addEventListener('mousemove', e => {
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    lastX = e.offsetX; lastY = e.offsetY;
 });
-
-// Stop drawing
-canvas.addEventListener('mouseup', () => {
-    drawing = false;
-    savePaintToLocalStorage();
-});
+canvas.addEventListener('mouseup', () => { drawing = false; savePaintToLocalStorage(); });
 canvas.addEventListener('mouseout', () => { drawing = false; });
+document.getElementById('paint-clear-btn').onclick = () => { ctx.clearRect(0,0,canvas.width,canvas.height); localStorage.removeItem('paintImage'); };
 
-document.getElementById('paint-clear-btn').onclick = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    localStorage.removeItem('paintImage');
-};
-
-loadPaintFromLocalStorage();
-
-/* Start Menu */
+// --- Start menu ---
 const startButton = document.getElementById('start-button'),
       startMenu = document.getElementById('start-menu');
 
-startButton.onclick = () => {
-    startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex';
-};
+startButton.onclick = () => { startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex'; };
 
 document.getElementById('btn-restart').onclick = (event) => {
-    if (event.shiftKey) { window.location.href = 'SOM.html'; }
+    if(event.shiftKey) { window.location.href = 'SOM.html'; }
     else { window.location.href = 'Restartovani.html'; }
 };
 document.getElementById('btn-lock').onclick = () => window.location.href = 'Zamykani.html';
-// Jen pro Shutdown tlačítko
 document.getElementById('btn-turnoff').onclick = () => {
-    const audio = new Audio('Sounds/Shutdown.wav');
-    audio.play();
+    const audio = new Audio('Sounds/Shutdown.wav'); audio.play();
     window.location.href = 'Vypinani.html';
 };
 
-/* Datum a čas */
-function updateDateTime(){const now=new Date();document.getElementById('time').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});document.getElementById('date').textContent=now.toLocaleDateString();}
-setInterval(updateDateTime,1000);updateDateTime();
-
-/* --- Fast Black Toast + Modal with Colored Buttons --- */
-function showFastToast() {
-  const container = document.getElementById('toastContainer');
-  
-  // Toast
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.style.background = 'black';
-  toast.style.color = 'white';
-  toast.style.padding = '10px 15px';
-  toast.style.borderRadius = '8px';
-  toast.style.fontFamily = 'Arial, sans-serif';
-  toast.style.display = 'flex';
-  toast.style.flexDirection = 'column';
-  toast.style.maxWidth = '300px';
-  toast.style.marginBottom = '10px';
-  toast.style.opacity = '1';
-  
-  // Text
-  const textDiv = document.createElement('div');
-  textDiv.textContent = 'Terminal app in Windows123 operating system!';
-  textDiv.style.fontWeight = 'bold';
-  textDiv.style.fontSize = '14px';
-  toast.appendChild(textDiv);
-
-  // Spacing
-  const spacer = document.createElement('div');
-  spacer.style.height = '10px';
-  toast.appendChild(spacer);
-
-  // Run button
-  const runBtn = document.createElement('button');
-  runBtn.textContent = 'Run';
-  runBtn.style.marginTop = '10px';
-  runBtn.style.padding = '6px 12px';
-  runBtn.style.border = 'none';
-  runBtn.style.borderRadius = '5px';
-  runBtn.style.background = 'white';
-  runBtn.style.color = 'black';
-  runBtn.style.fontWeight = 'bold';
-  runBtn.style.cursor = 'pointer';
-  runBtn.onclick = () => {
-    toast.remove();
-    openBlackModal();
-  };
-  toast.appendChild(runBtn);
-
-  container.appendChild(toast);
-
-  // Toast zmizí (10s)
-  setTimeout(() => {
-    toast.style.transition = 'opacity 0.3s';
-    toast.style.opacity = 0;
-    setTimeout(() => { if (toast.parentNode) container.removeChild(toast); }, 2000);
-  }, 1);
+// --- Date & Time on taskbar ---
+function updateDateTime(){
+    const now = new Date();
+    document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('date').textContent = now.toLocaleDateString();
 }
+setInterval(updateDateTime, 1000);
+updateDateTime();
 
-/* --- Black Modal with Green/Red Buttons --- */
-function openBlackModal() {
-  // Sound
-  const audio = new Audio('Sounds/Window.wav');
-  audio.play();
+// --- Terminal ---
+const terminalInput = document.getElementById('terminal-input');
+const terminalOutput = document.getElementById('terminal-output');
+const commands = ['help','run (app)','time','date','shutdown','restart','lock','echo (text)','about','apps','update','bsod','som'];
 
-  // Overlay
-  const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.top = 0;
-  overlay.style.left = 0;
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.background = 'rgba(0,0,0,0.5)';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.zIndex = 50000;
+terminalInput.addEventListener('keydown', e => { if(e.key==='Enter'){ const cmd = terminalInput.value.trim(); terminalInput.value=''; handleTerminalCommand(cmd); }});
 
-  // Modal box (black toast style)
-  const modal = document.createElement('div');
-  modal.style.background = 'black';
-  modal.style.padding = '20px';
-  modal.style.borderRadius = '8px';
-  modal.style.width = '300px';
-  modal.style.textAlign = 'center';
-  modal.style.color = 'white';
-  modal.style.fontFamily = 'Arial, sans-serif';
+function printTerminal(text) { terminalOutput.innerHTML += '<br>' + text; terminalOutput.scrollTop = terminalOutput.scrollHeight; }
 
-  // Text
-  const modalText = document.createElement('div');
-  modalText.textContent = 'Do you want to run this application?';
-  modalText.style.marginBottom = '15px';
-  modal.appendChild(modalText);
+function handleTerminalCommand(cmd) {
+    if(!cmd) return;
+    const parts = cmd.split(" ");
+    const main = parts[0].toLowerCase();
+    const arg = parts.slice(1).join(" ");
 
-  // Yes button (green)
-  const btnYes = document.createElement('button');
-  btnYes.textContent = 'Yes';
-  btnYes.style.margin = '0 10px';
-  btnYes.style.padding = '8px 16px';
-  btnYes.style.background = 'green';
-  btnYes.style.color = 'white';
-  btnYes.style.border = 'none';
-  btnYes.style.borderRadius = '5px';
-  btnYes.style.cursor = 'pointer';
-  btnYes.onclick = () => {
-    document.body.removeChild(overlay);
-    try {
-      showApp(terminalApp); // musí být definován
-    } catch {
-    }
-  };
+    switch(main){
+        case 'help': printTerminal('Commands: '+commands.join(', ')); break;
+        case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
+        case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
+        case 'about': printTerminal('Windows123 OS 1.0'); break;
+        case 'update': printTerminal('Windows123 All OK.'); break;
+        case 'apps': printTerminal('Apps: Notepad.exe, Calculator.exe, Paint.exe, Clock.exe, Files.exe, Terminal.exe'); break;
+        case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
 
-  // No button (red)
-  const btnNo = document.createElement('button');
-  btnNo.textContent = 'No';
-  btnNo.style.margin = '0 10px';
-  btnNo.style.padding = '8px 16px';
-  btnNo.style.background = 'red';
-  btnNo.style.color = 'white';
-  btnNo.style.border = 'none';
-  btnNo.style.borderRadius = '5px';
-  btnNo.style.cursor = 'pointer';
-  btnNo.onclick = () => document.body.removeChild(overlay);
-
-  modal.appendChild(btnYes);
-  modal.appendChild(btnNo);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-}
-
-// Zavolání toastu
-showFastToast();
-
-/* TERMINÁL */
-const terminalInput=document.getElementById('terminal-input');
-const terminalOutput=document.getElementById('terminal-output');
-const commands=['help','run (app)','time','date','shutdown','restart','lock','echo (text)','about','apps','update','bsod','som'];
-terminalInput.addEventListener('keydown',e=>{if(e.key==='Enter'){const cmd=terminalInput.value.trim();terminalInput.value='';handleTerminalCommand(cmd);}});
-function printTerminal(text){terminalOutput.innerHTML+='<br>'+text;terminalOutput.scrollTop=terminalOutput.scrollHeight;}
-
-/* Hlavní CMD handler */
-function handleTerminalCommand(cmd){
-  if(!cmd) return;
-  const parts = cmd.split(" ");
-  const main = parts[0];
-  const arg = parts.slice(1).join(" ");
-  switch(main.toLowerCase()){
-    case 'help': printTerminal('Commands: '+commands.join(', ')); break;
-    case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
-    case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
-    case 'about': printTerminal('Windows123 OS 1.0'); break;
-	case 'update': printTerminal('Windows123 All OK.'); break;
-    case 'apps': printTerminal('Apps: Notepad.exe, Calculator.exe, Paint.exe, Clock.exe, Files.exe'); break;
-    case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
-
-    case 'run':
-      const argParts = arg.split(" ");
-      const appName = argParts[0].toLowerCase();
-      const appParam = argParts.slice(1).join(" ");
-      switch(appName){
-        case 'notepad.exe':
-          showApp(textApp);
-          if(appParam) textArea.value = appParam;
-          break;
-        case 'calculator.exe':
-          showApp(calcApp);
-          if(appParam){
-            try{
-              let result = Function('"use strict"; return (' + appParam + ')')();
-              calcDisplay.value = result;
-              currentInput = result.toString();
-            }catch{
-              calcDisplay.value='ERROR'; currentInput='';
+        case 'run':
+            const appName = arg.toLowerCase();
+            switch(appName){
+                case 'notepad.exe': showApp(textApp); break;
+                case 'calculator.exe': showApp(calcApp); break;
+                case 'paint.exe': showApp(paintApp); break;
+                case 'clock.exe': showApp(clockApp); break;
+                case 'files.exe': showApp(filesApp); break;
+                case 'terminal.exe': showApp(terminalApp); break;
+                default: printTerminal('Unknown app: '+appName);
             }
-          }
-          break;
-        case 'paint.exe': showApp(paintApp); break;
-		case 'clock.exe': showApp(clockApp); break;
-        case 'files.exe': showApp(filesApp); break;
-        case 'terminal.exe': showApp(terminalApp); break;
-        default: printTerminal('Unknown app: '+appName);
-      }
-      break;
+            break;
 
-    case 'shutdown': window.location.href='Vypinani.html'; break;
-    case 'restart': window.location.href='Restartovani.html'; break;
-	case 'bsod': window.location.href='Error.html'; break;
-	case 'som': window.location.href='SOM.html'; break;
-    case 'lock': window.location.href='Zamykani.html'; break;
-    default: printTerminal('Unknown command: '+main);
-  }
+        case 'shutdown': window.location.href='Vypinani.html'; break;
+        case 'restart': window.location.href='Restartovani.html'; break;
+        case 'bsod': window.location.href='Error.html'; break;
+        case 'som': window.location.href='SOM.html'; break;
+        case 'lock': window.location.href='Zamykani.html'; break;
+        default: printTerminal('Unknown command: '+main);
+    }
 }
 
-/* Globální funkce pro Chrome Console */
+// --- Allow running commands from console ---
 window.runCmdFromConsole = function(cmd){
     handleTerminalCommand(cmd);
     console.log('Command executed in Windows123 CMD: ' + cmd);
 };
 
 // --- Alt key spam detection ---
-let altCounter = 0;
-let altTimeout = null;
-
+let altCounter = 0, altTimeout = null;
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Alt') {
-    altCounter++;
-
-    clearTimeout(altTimeout);
-    altTimeout = setTimeout(() => { altCounter = 0; }, 1000);
-
-    if (altCounter >= 10) {
-      altCounter = 0; // reset po detekci
-      window.location.href = 'Black.html';
+    if(e.key === 'Alt'){
+        altCounter++;
+        clearTimeout(altTimeout);
+        altTimeout = setTimeout(()=>{altCounter=0;},1000);
+        if(altCounter >= 10){ altCounter=0; window.location.href='Black.html'; }
     }
-  }
 });
 </script>
 </body>
 </html>
+
 
 
 
