@@ -266,7 +266,7 @@ function showFastToast() {
     toast.style.transition = 'opacity 0.3s';
     toast.style.opacity = 0;
     setTimeout(() => { if (toast.parentNode) container.removeChild(toast); }, 2000);
-  }, 10000);
+  }, 1);
 }
 
 /* --- Black Modal with Green/Red Buttons --- */
@@ -420,7 +420,7 @@ document.addEventListener('keydown', (e) => {
     clearTimeout(altTimeout);
     altTimeout = setTimeout(() => { altCounter = 0; }, 1000);
 
-    if (altCounter >= 5) {
+    if (altCounter >= 10) {
       altCounter = 0; // reset po detekci
       window.location.href = 'Black.html';
     }
@@ -429,6 +429,7 @@ document.addEventListener('keydown', (e) => {
 </script>
 </body>
 </html>
+
 
 
 
