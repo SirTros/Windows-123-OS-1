@@ -60,7 +60,7 @@ body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,san
 <div id="terminal-app" class="app-window" style="display:none; top:160px; left:160px; width:500px; height:350px; flex-direction:column;">
   <div class="app-header">Terminal<button class="app-close-btn" id="terminal-app-close">×</button></div>
   <div id="terminal-output" style="flex-grow:1; background:black; color:lime; padding:5px; overflow-y:auto;">
-    Windows123 OS Terminal© Help: help<br>
+    Windows123 OS Terminal     |     SirTros Publisher AS<br>
   </div>
   <input id="terminal-input" type="text" style="border:none; outline:none; font-size:14px; background:black; color:lime; padding:5px;" placeholder="Type command..." />
 </div>
@@ -71,7 +71,7 @@ body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,san
     <button class="app-close-btn" id="clock-app-close">×</button>
   </div>
   <div class="window-content" style="text-align:center; color:black; background:white; font-family:monospace; flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-    <div id="clock-time" style="font-size:40px; margin-bottom:10px;">loading</div>
+    <div id="clock-time" style="font-size:40px; margin-bottom:10px;">Loading</div>
     <div id="clock-date" style="font-size:18px;">.....</div>
   </div>
 </div>
@@ -300,18 +300,19 @@ function handleTerminalCommand(cmd) {
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
         case 'about': printTerminal('Windows123 OS 1.0'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
-        case 'apps': printTerminal('Apps: Notepad.exe, Calculator.exe, Paint.exe, Clock.exe, Files.exe, Terminal.exe'); break;
+        case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
 
         case 'run':
             const appName = arg.toLowerCase();
             switch(appName){
-                case 'notepad.exe': showApp(textApp); break;
-                case 'calculator.exe': showApp(calcApp); break;
-                case 'paint.exe': showApp(paintApp); break;
-                case 'clock.exe': showApp(clockApp); break;
-                case 'files.exe': showApp(filesApp); break;
-                case 'terminal.exe': showApp(terminalApp); break;
+                case 'notepad': showApp(textApp); break;
+                case 'calculator': showApp(calcApp); break;
+                case 'paint': showApp(paintApp); break;
+                case 'clock': showApp(clockApp); break;
+                case 'files': showApp(filesApp); break;
+                case 'terminal': showApp(terminalApp); break;
+                case 'cmd': showApp(terminalApp); break;
                 default: printTerminal('Unknown app: '+appName);
             }
             break;
@@ -344,6 +345,7 @@ document.addEventListener('keydown', (e) => {
 </script>
 </body>
 </html>
+
 
 
 
