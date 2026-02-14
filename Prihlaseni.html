@@ -1,216 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Login Windows123</title>
+<title>Vysokovýkonný Login - Smooth Exit</title>
 <style>
   body, html {
     margin: 0; padding: 0; height: 100%;
     background-color: #008000; color: white;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", sans-serif;
     overflow: hidden; user-select: none;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
-    position: relative;
   }
+
   #time { font-size: 80px; font-weight: 600; }
-  #date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
+  #date { font-size: 28px; margin-bottom: 60px; }
 
-  #pcButton {
-    position: fixed; right: 20px; bottom: 20px;
-    font-size: 28px; background: #008000;
-    padding: 10px 16px; border-radius: 10px;
-    cursor: pointer; user-select: none;
-    transition: background 0.2s; z-index: 10;
-  }
-  #pcButton:hover { background: #00a000; }
-
-  #startMenu {
-    position: fixed; bottom: 60px; right: 20px;
-    width: 200px; background: #222;
-    border: 2px solid #555; border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    display: none; flex-direction: column;
-    overflow: hidden; z-index: 50;
-  }
-  #startMenu.active { display: flex; }
-  #startMenu h3 { margin: 0; padding: 12px; background: #333; font-size: 18px; border-bottom: 1px solid #444; text-align: center; }
-  .start-item { padding: 12px 15px; cursor: pointer; font-size: 16px; transition: background 0.2s; }
-  .start-item:hover { background: #444; }
-
+  /* OVERLAY */
   #overlay {
-    position: fixed; left: 0; top: 100%;
+    position: fixed;
+    top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.85);
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
     z-index: 100;
-    transition: top 0.4s ease;
+    
+    /* Startuje nahoře (otevřený) */
+    transform: translateY(0);
+    will-change: transform;
+    /* Tato křivka dělá efekt: pomalý start -> zrychlení -> plynulé zastavení */
+    transition: transform 0.8s cubic-bezier(0.68, -0.15, 0.26, 1.15);
   }
-  #overlay.active { top: 0 !important; }
-  #closeBar { position: absolute; top: 0; left: 0; width: 100%; height: 60px; background: #333; color: white; text-align: center; line-height: 60px; font-size: 20px; cursor: grab; user-select: none; }
 
-  #userImage { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px; object-fit: cover; border: 2px solid white; background-color: white; padding: 5px; }
-  #userName { font-size: 24px; font-weight: 600; color: white; margin-bottom: 30px; }
-  #signInBtn { font-size: 24px; padding: 12px 30px; border-radius: 6px; border: none; background-color: white; color: black; cursor: pointer; transition: background 0.2s; }
-
-  /* POTVRZOVACÍ OKNO - TEĎ ČERNÉ */
-  #confirmOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 200; }
-  #confirmBox { 
-    background: #000000; color: white; /* ČISTĚ ČERNÁ */
-    padding: 30px 40px; 
-    border-radius: 8px; border: 1px solid #444;
-    display: flex; flex-direction: column; 
-    min-width: 350px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+  /* Bar nahoře - klikací zóna pro zavření */
+  #closeBar {
+    position: absolute; top: 0; width: 100%; height: 100px;
+    cursor: pointer; display: flex; justify-content: center; padding-top: 15px;
   }
-  #confirmBox p { margin-bottom: 25px; font-size: 19px; text-align: center; }
-  #confirmBox .buttons { display: flex; justify-content: center; gap: 20px; }
-  #confirmBox button { padding: 10px 25px; font-size: 16px; cursor: pointer; border-radius: 4px; border: none; font-weight: 600; }
-  #confirmBox button.yes { background: #008000; color: white; }
-  #confirmBox button.no { background: #d13438; color: white; }
+  #closeBar::after {
+    content: ""; width: 50px; height: 5px;
+    background: rgba(255,255,255,0.3); border-radius: 10px;
+  }
 
-  #blackScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: white; display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 999; opacity: 0; transition: opacity 1s; }
-  #blackScreen.show { display: flex; opacity: 1; }
-  .loader { border: 5px solid #333; border-top: 5px solid white; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
+  #pcButton { position: fixed; right: 20px; bottom: 20px; font-size: 32px; cursor: pointer; z-index: 10; }
+  #userImage { width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; background: #fff; }
+  #signInBtn { margin-top: 30px; padding: 12px 40px; font-size: 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<div id="time"></div>
-<div id="date"></div>
-
-<div id="pcButton">⏻</div>
-
-<div id="startMenu">
-  <h3>Start</h3>
-  <div class="start-item" id="sdBtn">Shutdown</div>
-  <div class="start-item" id="rsBtn">Restart</div>
-</div>
+<div id="time">00:00</div>
+<div id="date">Načítání...</div>
+<div id="pcButton" onclick="openOverlay()">⏻</div>
 
 <div id="overlay">
-  <div id="closeBar">Drag down to close</div>
-  <img id="userImage" src="Pictures/User.png" alt="User" />
-  <div id="userName">USER</div>
-  <button id="signInBtn">Sign in</button>
+  <!-- Kliknutím na lištu se panel zavře -->
+  <div id="closeBar" onclick="closeOverlay()"></div>
+  <img id="userImage" src="https://via.placeholder.com" alt="User" />
+  <h2 id="userName">USER</h2>
+  <button id="signInBtn" onclick="closeOverlay()">Sign In</button>
 </div>
-
-<div id="confirmOverlay">
-  <div id="confirmBox">
-    <p id="confirmText">Are you sure?</p>
-    <div class="buttons">
-      <button class="yes">YES</button>
-      <button class="no">NO</button>
-    </div>
-  </div>
-</div>
-
-<div id="blackScreen">
-  <div class="loader"></div>
-  <div style="font-size: 50px; font-weight: 600;">Welcome</div>
-</div>
-
-<audio id="welcomeSound" src="Sounds/Welcome.wav" preload="auto"></audio>
 
 <script>
-const timeEl = document.getElementById('time');
-const dateEl = document.getElementById('date');
-const pcButton = document.getElementById('pcButton');
-const startMenu = document.getElementById('startMenu');
 const overlay = document.getElementById('overlay');
-const signInBtn = document.getElementById('signInBtn');
-const confirmOverlay = document.getElementById('confirmOverlay');
-const blackScreen = document.getElementById('blackScreen');
-const welcomeSound = document.getElementById('welcomeSound');
 
-let currentAction = "";
-
+// Hodiny
 function updateTime() {
   const now = new Date();
-  timeEl.textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('time').textContent = now.toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'});
+  document.getElementById('date').textContent = now.toLocaleDateString('cs-CZ', {day: 'numeric', month: 'long', year: 'numeric'});
 }
 setInterval(updateTime, 1000); updateTime();
 
-pcButton.addEventListener('click', e => { e.stopPropagation(); startMenu.classList.toggle('active'); });
-document.addEventListener('click', () => startMenu.classList.remove('active'));
+// Funkce pro otevření (vyskočí nahoru)
+function openOverlay() {
+  overlay.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+  overlay.style.transform = 'translateY(0)';
+}
 
-document.getElementById('sdBtn').addEventListener('click', e => { 
-  e.stopPropagation(); currentAction = "vypinani.html";
-  document.getElementById('confirmText').textContent = "Do you want to shutdown the computer?";
-  confirmOverlay.style.display='flex'; 
-});
-document.getElementById('rsBtn').addEventListener('click', e => { 
-  e.stopPropagation(); currentAction = "restartovani.html";
-  document.getElementById('confirmText').textContent = "Do you want to restart the computer?";
-  confirmOverlay.style.display='flex'; 
-});
+// Funkce pro zavření (zrychlí a plynule zajede dolů)
+function closeOverlay() {
+  // 0.8s délka pro hezké vyniknutí akcelerace a decelerace
+  overlay.style.transition = 'transform 0.8s cubic-bezier(0.45, 0, 0.55, 1)';
+  overlay.style.transform = 'translateY(100%)';
+}
 
-confirmOverlay.querySelector('.no').addEventListener('click', () => confirmOverlay.style.display='none');
-confirmOverlay.querySelector('.yes').addEventListener('click', () => { window.location.href = currentAction; });
+// Přidáme i podporu pro drag (tažení), kdyby uživatel nechtěl jen klikat
+let isDragging = false;
+let startY = 0;
 
-// --- DRAG CITLIVOST 1/4 OBRAZOVKY ---
-let isDragging = false, startY = 0, initialTop = 0;
-
-function handleStart(y) {
-  if (pcButton.contains(event.target) || startMenu.contains(event.target) || confirmOverlay.contains(event.target)) return;
-  isDragging = true; startY = y;
-  initialTop = overlay.getBoundingClientRect().top;
+overlay.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startY = e.clientY;
   overlay.style.transition = 'none';
-}
+});
 
-function handleMove(y) {
+window.addEventListener('mousemove', (e) => {
   if (!isDragging) return;
-  let deltaY = y - startY;
-  let newTop = initialTop + deltaY;
-  if (newTop < 0) newTop = 0;
-  overlay.style.top = newTop + 'px';
-}
+  let deltaY = e.clientY - startY;
+  if (deltaY < 0) deltaY = 0;
+  overlay.style.transform = `translateY(${deltaY}px)`;
+});
 
-function handleEnd() {
+window.addEventListener('mouseup', (e) => {
   if (!isDragging) return;
   isDragging = false;
-  overlay.style.transition = 'top 0.4s ease';
-  
-  const currentTop = parseInt(overlay.style.top);
-  const screenHeight = window.innerHeight;
-
-  // CITLIVOST: Pokud je overlay víc než v 1/4 cesty nahoru/dolů, změní stav
-  if (initialTop > screenHeight / 2) { // Otevíráme nahoru
-     if (currentTop < screenHeight * 0.75) { // Stačí vytáhnout o 25%
-        overlay.style.top = '0px'; overlay.classList.add('active');
-     } else {
-        overlay.style.top = '100%'; overlay.classList.remove('active');
-     }
-  } else { // Zavíráme dolů
-     if (currentTop > screenHeight * 0.25) { // Stačí stáhnout o 25%
-        overlay.style.top = '100%'; overlay.classList.remove('active');
-     } else {
-        overlay.style.top = '0px'; overlay.classList.add('active');
-     }
+  let deltaY = e.clientY - startY;
+  if (deltaY > 150) {
+    closeOverlay(); // Pokud potáhl dostatečně, zavřít s animací
+  } else {
+    openOverlay(); // Jinak vrátit zpět
   }
-}
-
-document.addEventListener('mousedown', e => handleStart(e.clientY));
-document.addEventListener('mousemove', e => handleMove(e.clientY));
-document.addEventListener('mouseup', handleEnd);
-
-document.addEventListener('keydown', () => {
-  overlay.style.transition = 'top 0.4s ease';
-  overlay.style.top = '0px';
-  overlay.classList.add('active');
 });
 
-signInBtn.addEventListener('click', () => {
-  overlay.style.display = 'none';
-  blackScreen.classList.add('show');
-  if(welcomeSound) welcomeSound.play();
-  setTimeout(() => { window.location.href = 'Plocha.html'; }, 5000);
-});
 </script>
 </body>
 </html>
