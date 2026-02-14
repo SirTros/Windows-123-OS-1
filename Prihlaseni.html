@@ -1,121 +1,87 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Vysokovýkonný Login - Smooth Exit</title>
+<title>Login Windows123</title>
 <style>
   body, html {
     margin: 0; padding: 0; height: 100%;
     background-color: #008000; color: white;
-    font-family: "Segoe UI", sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden; user-select: none;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
   }
 
   #time { font-size: 80px; font-weight: 600; }
-  #date { font-size: 28px; margin-bottom: 60px; }
+  #date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
 
-  /* OVERLAY */
   #overlay {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; left: 0; top: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.85);
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(6px);
     z-index: 100;
-    
-    /* Startuje nahoře (otevřený) */
+    /* Výkonné posouvání */
     transform: translateY(0);
     will-change: transform;
-    /* Tato křivka dělá efekt: pomalý start -> zrychlení -> plynulé zastavení */
-    transition: transform 0.8s cubic-bezier(0.68, -0.15, 0.26, 1.15);
+    /* Plynulé zrychlení a zpomalení */
+    transition: transform 0.8s cubic-bezier(0.45, 0, 0.55, 1);
   }
 
-  /* Bar nahoře - klikací zóna pro zavření */
-  #closeBar {
-    position: absolute; top: 0; width: 100%; height: 100px;
-    cursor: pointer; display: flex; justify-content: center; padding-top: 15px;
+  #closeBar { 
+    position: absolute; top: 0; left: 0; width: 100%; height: 80px; 
+    cursor: pointer; display: flex; justify-content: center; align-items: center;
   }
   #closeBar::after {
-    content: ""; width: 50px; height: 5px;
-    background: rgba(255,255,255,0.3); border-radius: 10px;
+    content: ""; width: 50px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px;
   }
 
-  #pcButton { position: fixed; right: 20px; bottom: 20px; font-size: 32px; cursor: pointer; z-index: 10; }
-  #userImage { width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; background: #fff; }
-  #signInBtn { margin-top: 30px; padding: 12px 40px; font-size: 20px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; }
+  #userImage { width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; background-color: white; padding: 5px; }
+  #userName { font-size: 24px; font-weight: 600; margin-bottom: 30px; }
+  #signInBtn { font-size: 24px; padding: 12px 30px; border-radius: 6px; border: none; background-color: white; color: black; cursor: pointer; }
+
+  #pcButton { position: fixed; right: 20px; bottom: 20px; font-size: 28px; background: #008000; padding: 10px 16px; border-radius: 10px; cursor: pointer; z-index: 10; }
 </style>
 </head>
 <body>
 
-<div id="time">00:00</div>
-<div id="date">Načítání...</div>
+<div id="time"></div>
+<div id="date"></div>
+
 <div id="pcButton" onclick="openOverlay()">⏻</div>
 
-<div id="overlay">
-  <!-- Kliknutím na lištu se panel zavře -->
+<div id="overlay" id="loginOverlay">
   <div id="closeBar" onclick="closeOverlay()"></div>
-  <img id="userImage" src="https://via.placeholder.com" alt="User" />
-  <h2 id="userName">USER</h2>
-  <button id="signInBtn" onclick="closeOverlay()">Sign In</button>
+  <img id="userImage" src="Pictures/User.png" alt="User" />
+  <div id="userName">USER</div>
+  <button id="signInBtn" onclick="closeOverlay()">Sign in</button>
 </div>
 
 <script>
 const overlay = document.getElementById('overlay');
 
-// Hodiny
 function updateTime() {
   const now = new Date();
-  document.getElementById('time').textContent = now.toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'});
-  document.getElementById('date').textContent = now.toLocaleDateString('cs-CZ', {day: 'numeric', month: 'long', year: 'numeric'});
+  document.getElementById('time').textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('date').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 setInterval(updateTime, 1000); updateTime();
 
-// Funkce pro otevření (vyskočí nahoru)
 function openOverlay() {
-  overlay.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+  overlay.style.transition = 'transform 0.5s ease-out';
   overlay.style.transform = 'translateY(0)';
 }
 
-// Funkce pro zavření (zrychlí a plynule zajede dolů)
 function closeOverlay() {
-  // 0.8s délka pro hezké vyniknutí akcelerace a decelerace
+  // Efekt: rozjezd -> švih -> plynulé zastavení za okrajem
   overlay.style.transition = 'transform 0.8s cubic-bezier(0.45, 0, 0.55, 1)';
   overlay.style.transform = 'translateY(100%)';
 }
-
-// Přidáme i podporu pro drag (tažení), kdyby uživatel nechtěl jen klikat
-let isDragging = false;
-let startY = 0;
-
-overlay.addEventListener('mousedown', (e) => {
-  isDragging = true;
-  startY = e.clientY;
-  overlay.style.transition = 'none';
-});
-
-window.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  let deltaY = e.clientY - startY;
-  if (deltaY < 0) deltaY = 0;
-  overlay.style.transform = `translateY(${deltaY}px)`;
-});
-
-window.addEventListener('mouseup', (e) => {
-  if (!isDragging) return;
-  isDragging = false;
-  let deltaY = e.clientY - startY;
-  if (deltaY > 150) {
-    closeOverlay(); // Pokud potáhl dostatečně, zavřít s animací
-  } else {
-    openOverlay(); // Jinak vrátit zpět
-  }
-});
-
 </script>
 </body>
 </html>
