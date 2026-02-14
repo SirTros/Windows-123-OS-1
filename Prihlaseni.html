@@ -12,11 +12,25 @@
     overflow: hidden; user-select: none;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
+    position: relative;
   }
-
+  
+  /* HLAVNÍ PLOCHA S ČASEM (Lock Screen) */
+  #lockScreen {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #008000;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 200; /* Je nad loginem */
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: n-resize; /* Naznačuje tažení nahoru */
+  }
   #time { font-size: 80px; font-weight: 600; }
   #date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
 
+  /* PŘIHLAŠOVACÍ PANEL (Login Screen) */
   #overlay {
     position: fixed; left: 0; top: 0;
     width: 100%; height: 100%;
@@ -25,63 +39,98 @@
     justify-content: center; align-items: center;
     backdrop-filter: blur(6px);
     z-index: 100;
-    /* Výkonné posouvání */
-    transform: translateY(0);
-    will-change: transform;
-    /* Plynulé zrychlení a zpomalení */
-    transition: transform 0.8s cubic-bezier(0.45, 0, 0.55, 1);
   }
 
   #closeBar { 
-    position: absolute; top: 0; left: 0; width: 100%; height: 80px; 
-    cursor: pointer; display: flex; justify-content: center; align-items: center;
-  }
-  #closeBar::after {
-    content: ""; width: 50px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px;
+    position: absolute; top: 0; left: 0; width: 100%; height: 60px; 
+    background: #333; color: white; text-align: center; line-height: 60px; 
+    font-size: 20px; cursor: pointer; 
   }
 
-  #userImage { width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; background-color: white; padding: 5px; }
-  #userName { font-size: 24px; font-weight: 600; margin-bottom: 30px; }
+  #userImage { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px; object-fit: cover; border: 2px solid white; background-color: white; padding: 5px; }
+  #userName { font-size: 24px; font-weight: 600; color: white; margin-bottom: 30px; }
   #signInBtn { font-size: 24px; padding: 12px 30px; border-radius: 6px; border: none; background-color: white; color: black; cursor: pointer; }
 
-  #pcButton { position: fixed; right: 20px; bottom: 20px; font-size: 28px; background: #008000; padding: 10px 16px; border-radius: 10px; cursor: pointer; z-index: 10; }
+  #pcButton { position: fixed; right: 20px; bottom: 20px; font-size: 28px; background: #008000; padding: 10px 16px; border-radius: 10px; cursor: pointer; z-index: 300; }
 </style>
 </head>
 <body>
 
-<div id="time"></div>
-<div id="date"></div>
+<!-- HLAVNÍ PLOCHA (Tento prvek budeme vytahovat nahoru) -->
+<div id="lockScreen">
+  <div id="time"></div>
+  <div id="date"></div>
+</div>
 
-<div id="pcButton" onclick="openOverlay()">⏻</div>
+<div id="pcButton">⏻</div>
 
-<div id="overlay" id="loginOverlay">
-  <div id="closeBar" onclick="closeOverlay()"></div>
+<!-- PŘIHLAŠOVACÍ PANEL (Je schovaný "pod" lock screenem) -->
+<div id="overlay">
+  <div id="closeBar" onclick="closeOverlay()">|Click to close</div>
   <img id="userImage" src="Pictures/User.png" alt="User" />
   <div id="userName">USER</div>
   <button id="signInBtn" onclick="closeOverlay()">Sign in</button>
 </div>
 
 <script>
-const overlay = document.getElementById('overlay');
+const lockScreen = document.getElementById('lockScreen');
+const timeEl = document.getElementById('time');
+const dateEl = document.getElementById('date');
 
 function updateTime() {
   const now = new Date();
-  document.getElementById('time').textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+  timeEl.textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('date').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 setInterval(updateTime, 1000); updateTime();
 
-function openOverlay() {
-  overlay.style.transition = 'transform 0.5s ease-out';
-  overlay.style.transform = 'translateY(0)';
+// --- DRAG NAHORU (Jako ve Windows) ---
+let isDragging = false, startY = 0;
+
+lockScreen.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startY = e.clientY;
+  lockScreen.style.transition = 'none';
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  let deltaY = e.clientY - startY;
+  
+  // Táhneme nahoru (deltaY je záporné)
+  if (deltaY < 0) {
+    lockScreen.style.transform = `translateY(${deltaY}px)`;
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+  lockScreen.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+  
+  let currentTransform = new WebKitCSSMatrix(getComputedStyle(lockScreen).transform).m42;
+  
+  // Pokud je to vytažené víc než o 150px, odjede to celé nahoru
+  if (currentTransform < -150) {
+    lockScreen.style.transform = 'translateY(-100%)';
+  } else {
+    lockScreen.style.transform = 'translateY(0)';
+  }
+});
+
+// --- CLICK TO CLOSE (Sjede to zpátky dolů) ---
+function closeOverlay() {
+  lockScreen.style.transition = 'transform 0.85s cubic-bezier(0.45, 0, 0.55, 1)';
+  lockScreen.style.transform = 'translateY(0)';
 }
 
-function closeOverlay() {
-  // Efekt: rozjezd -> švih -> plynulé zastavení za okrajem
-  overlay.style.transition = 'transform 0.8s cubic-bezier(0.45, 0, 0.55, 1)';
-  overlay.style.transform = 'translateY(100%)';
-}
+// Tlačítko PC taky odkryje login
+document.getElementById('pcButton').addEventListener('click', () => {
+    lockScreen.style.transition = 'transform 0.6s ease-in-out';
+    lockScreen.style.transform = 'translateY(-100%)';
+});
 </script>
+
 </body>
 </html>
