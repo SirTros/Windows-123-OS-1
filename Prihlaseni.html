@@ -75,7 +75,7 @@
 </div>
 
 <div id="overlay">
-  <div id="closeBar">Click to close</div>
+  <div id="closeBar" onclick="closeOverlay()">Click to close</div>
   <img id="userImage" src="Pictures/User.png" alt="User" />
   <div id="userName">USER</div>
   <button id="signInBtn">Sign in</button>
@@ -100,7 +100,6 @@ const confirmOverlay = document.getElementById('confirmOverlay');
 const welcomeSound = document.getElementById('welcomeSound');
 let currentAction = "";
 
-// Aktualizace hodin a data
 function updateTime() {
   const now = new Date();
   document.getElementById('time').textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
@@ -109,23 +108,19 @@ function updateTime() {
 }
 setInterval(updateTime, 1000); updateTime();
 
-// Funkce pro otevření login panelu
 function openLogin() {
   overlay.style.transition = 'top 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
   overlay.style.top = "0px";
 }
 
-// Otevírání libovolnou klávesou (Win 11 styl)
 document.addEventListener('keydown', openLogin);
 
-// Power button & Start menu
 document.getElementById('pcButton').addEventListener('click', e => {
   e.stopPropagation();
   startMenu.classList.toggle('active');
 });
 document.addEventListener('click', () => startMenu.classList.remove('active'));
 
-// Shutdown / Restart přesměrování
 document.getElementById('sdBtn').addEventListener('click', () => {
   currentAction = "Vypinani.html";
   document.getElementById('confirmText').textContent = "Do you want to shutdown?";
@@ -142,32 +137,30 @@ document.getElementById('btnYes').addEventListener('click', () => {
   window.location.href = currentAction;
 });
 
-// ZAVŘENÍ PANELU A PŘIHLÁŠENÍ NA PLOCHA.HTML
 function signIn() {
   overlay.style.transition = 'top 0.8s cubic-bezier(0.45, 0, 0.55, 1)';
   overlay.style.top = "100%";
-  // Přehrání zvuku (pokud existuje)
-  welcomeSound.play().catch(e => console.log("Sound play blocked"));
-  // Přesměrování po animaci
-  setTimeout(() => {
-    window.location.href = "plocha.html";
-  }, 500);
+  welcomeSound.play().catch(() => {});
+  setTimeout(() => { window.location.href = "plocha.html"; }, 500);
 }
 
 document.getElementById('signInBtn').addEventListener('click', signIn);
-document.getElementById('closeBar').addEventListener('click', () => {
-  overlay.style.top = "100%";
-});
+function closeOverlay() { overlay.style.top = "100%"; }
+document.getElementById('closeBar').onclick = closeOverlay;
 
-// LOGIKA TAŽENÍ NAHORU (DRAG UP)
+// DRAG LOGIKA - OPRAVENÁ PRO START MENU
 let isDragging = false, startY = 0;
 document.addEventListener('mousedown', e => {
-  if (overlay.style.top !== '0px' && !confirmOverlay.contains(e.target) && !startMenu.contains(e.target)) {
+  // Pokud klikneš na PC tlačítko nebo Start menu, drag se nespustí
+  if (e.target.closest('#pcButton') || e.target.closest('#startMenu')) return;
+
+  if (overlay.style.top !== '0px' && !confirmOverlay.contains(e.target)) {
     isDragging = true;
     startY = e.clientY;
     overlay.style.transition = 'none';
   }
 });
+
 document.addEventListener('mousemove', e => {
   if (!isDragging) return;
   let deltaY = e.clientY - startY;
@@ -176,6 +169,7 @@ document.addEventListener('mousemove', e => {
     overlay.style.top = (newTop < 0 ? 0 : newTop) + 'px';
   }
 });
+
 document.addEventListener('mouseup', () => {
   if (!isDragging) return;
   isDragging = false;
