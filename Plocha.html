@@ -298,7 +298,7 @@ function handleTerminalCommand(cmd) {
         case 'help': printTerminal('Commands: '+commands.join(', ')); break;
         case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
-        case 'about': printTerminal('Windows123 OS 1.0'); break;
+        case 'about': printTerminal('Windows123 OS 1.6'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
         case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
@@ -345,6 +345,7 @@ document.addEventListener('keydown', (e) => {
 </script>
 </body>
 </html>
+
 
 
 
