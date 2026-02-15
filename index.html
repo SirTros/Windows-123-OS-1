@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows123 Terminal</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Courier New", monospace;
+    overflow: hidden;
+}
+
+.terminal {
+    width: 650px;
+    max-width: 95%;
+    height: 400px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    padding: 20px;
+    color: white;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.line {
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+}
+
+.input-line {
+    display: flex;
+}
+
+.prompt {
+    margin-right: 5px;
+}
+
+input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    width: 100%;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    background: white;
+    margin-left: 5px;
+    animation: blink 1s step-start infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="terminal" id="terminal">
+    <div class="line">Copyrith © SirTros Publisher Inc.</div>
+    <div class="line">Type "start" to start Windows123 OS.</div>
+    <div class="line">Type "restart" to Shutdown Windows123 OS.</div>
+    <br>
+    <div class="input-line">
+        <span class="prompt">></span>
+        <input type="text" id="command" autofocus>
+        <span class="cursor"></span>
+    </div>
+</div>
+
+<audio id="typeSound" src="type.mp3" preload="auto"></audio>
+
+<script>
+const input = document.getElementById("command");
+const terminal = document.getElementById("terminal");
+const sound = document.getElementById("typeSound");
+
+function addLine(text) {
+    const div = document.createElement("div");
+    div.className = "line";
+    div.textContent = text;
+    terminal.insertBefore(div, terminal.lastElementChild);
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+input.addEventListener("keydown", function(event) {
+
+    if (event.key.length === 1) {
+        sound.currentTime = 0;
+        sound.play();
+    }
+
+    if (event.key === "Enter") {
+        const value = input.value.trim().toLowerCase();
+        if (value === "") return;
+
+        addLine("<Admin> " + value);
+        input.value = "";
+
+        addLine("Loading...");
+
+        if (value === "start" || value === "restart") {
+            // správný příkaz
+            setTimeout(() => {
+                addLine("Correct command.");
+
+                if (value === "start") {
+                    setTimeout(() => window.location.href = "Nacitani.html", 1000);
+                }
+                if (value === "restart") {
+                    setTimeout(() => window.close(), 1000);
+                }
+
+            }, 2000);
+
+        } else {
+            // špatný příkaz
+            setTimeout(() => {
+                addLine("Wrong command!");
+            }, 2000);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
