@@ -172,35 +172,62 @@ closeBar.addEventListener('click', () => {
 // --- DRAG UP OTEVŘENÍ ---
 let isDragging = false;
 let startY = 0;
-let overlayHeight = overlay.offsetHeight;
 
-document.addEventListener('mousedown', e => {
-  if(e.clientY > window.innerHeight - 100){ // spodní oblast pro drag up
-    isDragging = true;
-    startY = e.clientY;
-    overlay.style.transition = 'none';
-  }
-});
-document.addEventListener('mousemove', e => {
+const dragArea = document.createElement("div");
+dragArea.style.position = "fixed";
+dragArea.style.bottom = "0";
+dragArea.style.left = "0";
+dragArea.style.width = "100%";
+dragArea.style.height = "140px";
+dragArea.style.zIndex = "999";
+document.body.appendChild(dragArea);
+
+dragArea.addEventListener("mousedown", startDrag);
+dragArea.addEventListener("touchstart", startDrag);
+
+document.addEventListener("mousemove", moveDrag);
+document.addEventListener("touchmove", moveDrag);
+
+document.addEventListener("mouseup", endDrag);
+document.addEventListener("touchend", endDrag);
+
+function startDrag(e){
+  isDragging = true;
+  startY = e.touches ? e.touches[0].clientY : e.clientY;
+  overlay.style.transition = "none";
+}
+
+function moveDrag(e){
   if(!isDragging) return;
-  let delta = startY - e.clientY; // drag up
-  if(delta > 0){ // jen drag nahoru
-    overlay.style.top = Math.max(100 - delta*100/overlayHeight, 0) + '%';
-  }
-});
-document.addEventListener('mouseup', e => {
+
+  let y = e.touches ? e.touches[0].clientY : e.clientY;
+  let delta = startY - y;
+
+  let percent = 100 - (delta * 0.2);
+
+  if(percent > 100) percent = 100;
+  if(percent < 0) percent = 0;
+
+  overlay.style.top = percent + "%";
+}
+
+function endDrag(){
   if(!isDragging) return;
   isDragging = false;
-  overlay.style.transition = 'top 0.4s ease';
-  if(parseInt(overlay.style.top) <= 50){ // pokud dostatečně nahoru, otevři
-    overlay.style.top = '0%';
-    overlay.classList.add('active');
-  } else { // jinak zůstaň dole
-    overlay.style.top = '100%';
-    overlay.classList.remove('active');
-  }
-});
 
+  overlay.style.transition = "top 0.35s ease";
+
+  let currentTop = parseFloat(overlay.style.top);
+
+  if(currentTop < 60){
+    overlay.style.top = "0%"; // otevřít
+    overlay.classList.add("active");
+  } else {
+    overlay.style.top = "100%"; // zavřít
+    overlay.classList.remove("active");
+  }
+})
+  
 // Sign in
 signInBtn.addEventListener('click', () => {
   overlay.style.display = 'none';
