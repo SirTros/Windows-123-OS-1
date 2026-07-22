@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Windows123 desktop</title>
 <style>
-body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;background-image:url('Pictures/Pozadi1.png');background-size:cover;background-position:center;background-repeat:no-repeat;user-select:none;}
+body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;background-image:url('Pictures/Pozadi.png');background-size:cover;background-position:center;background-repeat:no-repeat;user-select:none;}
 #desktop{width:100%;height:100%;position:relative;padding-bottom:50px;}
 .icon{width:60px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:absolute;border-radius:6px;color:white;text-align:center;}
 .icon:hover{background:rgba(255,255,255,0.2);}
@@ -83,6 +83,8 @@ body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,san
 <div id="volume-toast">🔊 50%</div>
 
 <script>
+
+
 const iconFiles = document.getElementById('icon-files'),
       iconText = document.getElementById('icon-text'),
       iconCalc = document.getElementById('icon-calc'),
@@ -298,7 +300,7 @@ function handleTerminalCommand(cmd) {
         case 'help': printTerminal('Commands: '+commands.join(', ')); break;
         case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
-        case 'about': printTerminal('Windows123 OS 1.6'); break;
+        case 'about': printTerminal('Windows123 OS 1.7'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
         case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
@@ -319,7 +321,7 @@ function handleTerminalCommand(cmd) {
 
         case 'shutdown': window.location.href='Vypinani.html'; break;
         case 'restart': window.location.href='Restartovani.html'; break;
-        case 'bsod': window.location.href='Error.html'; break;
+        case 'bsod': window.location.href='Start-Error.html'; break;
         case 'som': window.location.href='SOM.html'; break;
         case 'lock': window.location.href='Zamykani.html'; break;
         default: printTerminal('Unknown command: '+main);
@@ -342,10 +344,28 @@ document.addEventListener('keydown', (e) => {
         if(altCounter >= 10){ altCounter=0; window.location.href='Black.html'; }
     }
 });
+
+
+// Windows123 System Monitor - Freeze + Compute Pressure
+
+let lastTick = performance.now();
+
+setInterval(() => {
+    const now = performance.now();
+
+    // pokud JS zamrzlo více než 3 sekundy
+    if (now - lastTick > 5000) {
+        window.location.href="Error.html?cpu";
+    }
+
+    lastTick = now;
+}, 1000);
+
+
+
 </script>
 </body>
 </html>
-
 
 
 
