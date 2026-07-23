@@ -260,7 +260,8 @@ const appsForFiles = [
     {name:'Calculator', icon:'🧮', appEl: calcApp},
     {name:'Paint', icon:'🎨', appEl: paintApp},
     {name:'Terminal', icon:'📟', appEl: terminalApp},
-    {name:'Clock', icon:'🕒', appEl: clockApp}
+    {name:'Clock', icon:'🕒', appEl: clockApp},
+    {name:'Task Manager', icon:'📊', appEl: taskmanagerApp}
 ];
 
 // --- Load saved text and populate Files app ---
@@ -330,7 +331,7 @@ function makeDraggable(el) {
     });
 }
 
-[filesApp, textApp, calcApp, paintApp, terminalApp, clockApp].forEach(makeDraggable);
+[filesApp, textApp, calcApp, paintApp, terminalApp, clockApp, taskmanagerApp].forEach(makeDraggable);
 
 // --- Bring to front ---
 function bringToFront(el) {
@@ -454,7 +455,7 @@ function handleTerminalCommand(cmd) {
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
         case 'about': printTerminal('Windows123 OS 1.7'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
-        case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal'); break;
+        case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal, Taskmgr'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
 
         case 'run':
@@ -467,6 +468,7 @@ function handleTerminalCommand(cmd) {
                 case 'files': showApp(filesApp); break;
                 case 'terminal': showApp(terminalApp); break;
                 case 'cmd': showApp(terminalApp); break;
+                case 'taskmgr': showApp(taskmanagerApp); break;
                 default: printTerminal('Unknown app: '+appName);
             }
             break;
