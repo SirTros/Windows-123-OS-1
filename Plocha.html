@@ -5,42 +5,562 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Windows123 desktop</title>
 <style>
-body, html {margin:0;padding:0;height:100%;overflow:hidden;font-family:Arial,sans-serif;background-image:url('Pictures/Pozadi.png');background-size:cover;background-position:center;background-repeat:no-repeat;user-select:none;}
-#desktop{width:100%;height:100%;position:relative;padding-bottom:50px;}
-.icon{width:60px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:absolute;border-radius:6px;color:white;text-align:center;}
-.icon:hover{background:rgba(255,255,255,0.2);}
-.icon span{font-size:36px;user-select:none;}
-.icon label{margin-top:4px;font-size:12px;line-height:14px;user-select:none;white-space:normal;word-break:break-word;max-width:60px;}
-.app-window{position:fixed;background:#f0f0f0;border:2px solid #333;border-radius:8px;box-shadow:0 0 12px rgba(0,0,0,0.4);z-index:1000;display:flex;flex-direction:column;overflow:hidden;}
-.app-header{background:#333;color:white;padding:5px 10px;cursor:move;user-select:none;display:flex;justify-content:space-between;align-items:center;font-weight:bold;}
-.app-close-btn{background:none;border:none;color:white;font-size:20px;font-weight:bold;cursor:pointer;line-height:1;user-select:none;}
-#text-app textarea{flex-grow:1;padding:10px;border:none;resize:none;font-size:16px;font-family:monospace;outline:none;width:100%;box-sizing:border-box;}
-#calc-app{width:250px;display:none;flex-direction:column;}
-#calc-display{width:100%;font-size:24px;padding:8px;text-align:right;margin:10px 0;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;}
-#calc-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px;}
-#calc-buttons button{font-size:18px;padding:10px;cursor:pointer;border-radius:4px;border:1px solid #999;background:white;user-select:none;transition:background-color 0.2s;}
-#calc-clear{grid-column:span 4;background:#f44336;color:black;font-weight:bold;border:none;}
-#taskbar{position:fixed;bottom:0;left:0;right:0;height:50px;background-color:#202020;display:flex;align-items:center;padding:0 10px;user-select:none;z-index:2000;justify-content:space-between;}
-#start-button{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
-#start-button img { height:32px; width:32px; }
-#start-menu{position:fixed;bottom:50px;left:10px;background:white;border:2px solid #333;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.5);width:150px;display:none;flex-direction:column;z-index:2100;user-select:none;}
-#start-menu button{background:none;border:none;padding:10px;font-size:14px;cursor:pointer;border-bottom:1px solid #ccc;text-align:left;}
-#start-menu button:last-child{border-bottom:none;}
-#start-menu button:hover{background:#eee;}
-#datetime{color:white;margin-right:10px;font-size:12px;font-weight:bold;display:flex;flex-direction:column;justify-content:center;height:50px;user-select:none;text-align:right;}
-#datetime #time{font-size:16px;line-height:1;}
-#datetime #date{font-size:12px;line-height:1;}
-#taskmanager-app{width:600px;height:600px;display:none;flex-direction:column}.tm-content{background:#fff;color:#111;flex:1;padding:15px;font-family:"Segoe UI"}.tm-header{font-size:22px;margin-bottom:15px}.tm-box{background:#eee;border-radius:10px;padding:12px;margin-bottom:10px}.tm-list{margin-top:10px}.tm-process{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #ccc}.tm-system{color:red;font-weight:bold}.tm-button{padding:8px 15px;border-radius:8px;border:none;cursor:pointer}
-#files-app{width:320px;height:360px;display:none;flex-direction:column;position:fixed;top:80px;left:120px;background:#f0f0f0;border:2px solid #333;border-radius:8px;box-shadow:0 0 12px rgba(0,0,0,0.4);z-index:1000;overflow-y:auto;padding:10px;box-sizing:border-box;}
-#files-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
-#files-list .file-icon{width:60px;height:80px;display:flex;flex-direction:column;align-items:center;cursor:pointer;user-select:none;color:black;border-radius:6px;text-align:center;}
-#files-list .file-icon span{font-size:36px;user-select:none;}
-#files-list .file-icon label{font-size:12px;margin-top:4px;white-space:normal;word-break:break-word;max-width:60px;color:black;}
-#files-list .file-icon:hover{background:rgba(0,0,0,0.1);}
-#toastContainer{position:fixed;top:10px;right:10px;z-index:9999;}
-.toast{background:#fff;color:#000;padding:10px 20px;margin-down:50px;border-radius:5px;box-shadow:0 0 5px black;font-family:monospace;opacity:0;transition:opacity 0.3s;}
-#volume-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(50,50,50,0.9);color:white;padding:8px 16px;border-radius:8px;font-size:16px;display:none;z-index:5000;}
-#terminal-output, #terminal-input { font-family: 'Press Start 2P', monospace; }
+body, html {
+margin:0;
+padding:0;
+height:100%;
+overflow:hidden;
+font-family:Arial,sans-serif;
+background-image:url('Pictures/Pozadi.png');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+user-select:none;
+}
+
+#desktop{
+width:100%;
+height:100%;
+position:relative;
+padding-bottom:50px;
+}
+
+.icon{
+width:60px;
+height:80px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+position:absolute;
+border-radius:6px;
+color:white;
+text-align:center;
+}
+
+.icon:hover{
+background:rgba(255,255,255,0.2);
+}
+
+.icon span{
+font-size:36px;
+user-select:none;
+}
+
+.icon label{
+margin-top:4px;
+font-size:12px;
+line-height:14px;
+user-select:none;
+white-space:normal;
+word-break:break-word;
+max-width:60px;
+}
+
+.app-window{
+position:fixed;
+background:#f0f0f0;
+border:2px solid #333;
+border-radius:8px;
+box-shadow:0 0 12px rgba(0,0,0,0.4);
+z-index:1000;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+.app-header{
+background:#333;
+color:white;
+padding:5px 10px;
+cursor:move;
+user-select:none;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+}
+
+.app-close-btn{
+background:none;
+border:none;
+color:white;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+line-height:1;
+user-select:none;
+}
+
+#text-app textarea{
+flex-grow:1;
+padding:10px;
+border:none;
+resize:none;
+font-size:16px;
+font-family:monospace;
+outline:none;
+width:100%;
+box-sizing:border-box;
+}
+
+#calc-app{
+width:250px;
+display:none;
+flex-direction:column;
+}
+
+#calc-display{
+width:100%;
+font-size:24px;
+padding:8px;
+text-align:right;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:4px;
+box-sizing:border-box;
+}
+
+#calc-buttons{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:5px;
+padding:10px;
+}
+
+#calc-buttons button{
+font-size:18px;
+padding:10px;
+cursor:pointer;
+border-radius:4px;
+border:1px solid #999;
+background:white;
+user-select:none;
+transition:background-color 0.2s;
+}
+
+#calc-clear{
+grid-column:span 4;
+background:#f44336;
+color:black;
+font-weight:bold;
+border:none;
+}
+
+#taskbar{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:50px;
+background-color:#202020;
+display:flex;
+align-items:center;
+padding:0 10px;
+user-select:none;
+z-index:2000;
+justify-content:space-between;
+}
+
+#start-button{
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+user-select:none;
+height:50px;
+width:50px;
+}
+
+#start-button img{
+height:30px;
+width:30px;
+object-fit:contain;
+display:block;
+}
+
+#datetime{
+color:white;
+margin-right:10px;
+font-size:12px;
+font-weight:bold;
+display:flex;
+flex-direction:column;
+justify-content:center;
+height:50px;
+user-select:none;
+text-align:right;
+}
+
+#datetime #time{
+font-size:16px;
+line-height:1;
+}
+
+#datetime #date{
+font-size:12px;
+line-height:1;
+}
+
+#taskmanager-app{
+width:600px;
+height:600px;
+display:none;
+flex-direction:column;
+}
+
+.tm-content{
+background:#fff;
+color:#111;
+flex:1;
+padding:15px;
+font-family:"Segoe UI";
+}
+
+.tm-header{
+font-size:22px;
+margin-bottom:15px;
+}
+
+.tm-box{
+background:#eee;
+border-radius:10px;
+padding:12px;
+margin-bottom:10px;
+}
+
+.tm-process{
+display:flex;
+justify-content:space-between;
+padding:8px;
+border-bottom:1px solid #ccc;
+}
+
+
+#files-app{
+width:320px;
+height:360px;
+display:none;
+flex-direction:column;
+position:fixed;
+top:80px;
+left:120px;
+background:#f0f0f0;
+border:2px solid #333;
+border-radius:8px;
+box-shadow:0 0 12px rgba(0,0,0,0.4);
+z-index:1000;
+overflow-y:auto;
+padding:10px;
+box-sizing:border-box;
+}
+
+
+#files-list{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+
+
+#files-list .file-icon{
+width:60px;
+height:80px;
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+user-select:none;
+color:black;
+border-radius:6px;
+text-align:center;
+}
+
+
+#files-list .file-icon span{
+font-size:36px;
+user-select:none;
+}
+
+
+#files-list .file-icon label{
+font-size:12px;
+margin-top:4px;
+white-space:normal;
+word-break:break-word;
+max-width:60px;
+color:black;
+}
+
+
+#files-list .file-icon:hover{
+background:rgba(0,0,0,0.1);
+}
+
+
+#toastContainer{
+position:fixed;
+top:10px;
+right:10px;
+z-index:9999;
+}
+
+
+.toast{
+background:#fff;
+color:#000;
+padding:10px 20px;
+border-radius:5px;
+box-shadow:0 0 5px black;
+font-family:monospace;
+opacity:0;
+transition:opacity 0.3s;
+}
+
+
+#volume-toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(50,50,50,0.9);
+color:white;
+padding:8px 16px;
+border-radius:8px;
+font-size:16px;
+display:none;
+z-index:5000;
+}
+
+
+#terminal-output,
+#terminal-input{
+font-family:'Press Start 2P',monospace;
+}
+
+
+#start-menu-new{
+position:fixed;
+bottom:60px;
+left:10px;
+width:340px;
+height:450px;
+background:#111;
+color:white;
+border:1px solid #555;
+border-radius:18px;
+display:flex;
+flex-direction:column;
+padding:15px;
+z-index:5000;
+font-family:"Segoe UI";
+box-shadow:0 10px 30px #000;
+
+transform:translateY(40px) scale(.95);
+opacity:0;
+pointer-events:none;
+transition:0.25s ease;
+}
+
+
+#start-menu-new.open{
+transform:translateY(0) scale(1);
+opacity:1;
+pointer-events:auto;
+}
+
+
+#start-search{
+height:35px;
+border-radius:10px;
+border:1px solid #555;
+background:#222;
+color:white;
+padding:0 12px;
+font-size:16px;
+}
+
+
+#start-apps{
+flex:1;
+overflow-y:auto;
+margin-top:10px;
+scroll-behavior:smooth;
+}
+
+
+.start-app{
+display:flex;
+align-items:center;
+gap:12px;
+padding:10px;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+
+.start-app:hover{
+background:#333;
+}
+
+
+#start-bottom{
+display:flex;
+align-items:center;
+justify-content:space-between;
+position:relative;
+padding-top:10px;
+border-top:1px solid #444;
+}
+
+
+#user-box{
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+}
+
+
+#user-box img{
+width:38px;
+height:38px;
+border-radius:50%;
+background:white;
+padding:3px;
+box-sizing:border-box;
+}
+
+#power-button{
+font-size:28px;
+cursor:pointer;
+padding:8px;
+border-radius:10px;
+}
+
+
+#power-button:hover{
+background:#333;
+}
+
+#power-menu{
+position:absolute;
+right:0;
+bottom:55px;
+
+display:flex;
+flex-direction:column;
+gap:5px;
+
+background:#222;
+border:1px solid #555;
+border-radius:12px;
+padding:8px;
+
+width:150px;
+
+box-shadow:0 5px 20px #000;
+
+opacity:0;
+transform:translateY(20px) scale(.95);
+pointer-events:none;
+transition:.2s ease;
+}
+
+
+#power-menu.open{
+opacity:1;
+transform:translateY(0) scale(1);
+pointer-events:auto;
+}
+
+
+#power-menu button{
+width:100%;
+background:none;
+border:0;
+color:white;
+padding:10px;
+text-align:left;
+border-radius:8px;
+cursor:pointer;
+}
+
+
+#power-menu button:hover{
+background:#444;
+}
+
+
+#start-menu{
+transform:translateY(20px) scale(.95);
+opacity:0;
+pointer-events:none;
+transition:.2s ease;
+}
+
+
+#start-menu.open{
+transform:translateY(0) scale(1);
+opacity:1;
+pointer-events:auto;
+}
+
+
+#start-menu button{
+background:none;
+border:none;
+padding:10px;
+font-size:14px;
+cursor:pointer;
+border-bottom:1px solid #ccc;
+text-align:left;
+}
+
+
+#start-menu button:last-child{
+border-bottom:none;
+}
+
+
+#start-menu button:hover{
+background:#eee;
+}
+
+
+#start-apps::-webkit-scrollbar{
+width:8px;
+}
+
+
+#start-apps::-webkit-scrollbar-thumb{
+background:#666;
+border-radius:10px;
+}
+
+
+.tm-list{
+margin-top:10px;
+}
+
+
+.tm-system{
+color:red;
+font-weight:bold;
+}
+
+
+.tm-button{
+padding:8px 15px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+}
+
+
 </style>
 </head>
 <body>
@@ -85,7 +605,7 @@ Task Manager
 </div>
 
 <div class="tm-content">
-<div class="tm-header">Windows123 Task Manager</div>
+<div class="tm-header">Task Manager</div>
 
 <div class="tm-box">
 CPU: <span id="tm-cpu">0%</span><br>
@@ -102,7 +622,30 @@ Processes:
 </div>
 
 
-<div id="start-menu"><button id="btn-lock">Lock</button><button id="btn-restart">Restart</button><button id="btn-turnoff">Shutdown</button></div>
+<div id="start-menu-new">
+
+<input id="start-search" placeholder="Search 🔍">
+
+<h3>Apps:</h3>
+<div id="start-apps"></div>
+
+<div id="start-bottom">
+    <div id="user-box">
+        <img src="Pictures/User.png">
+        <span>User</span>
+    </div>
+
+    <div id="power-button">⏻</div>
+
+    <div id="power-menu">
+        <button onclick="location.href='Restartovani.html'">Restart</button>
+        <button onclick="location.href='Zamykani.html'">Lock</button>
+        <button onclick="location.href='Vypinani.html'">Shutdown</button>
+    </div>
+</div>
+
+</div>
+
 <div id="taskbar"><div id="start-button" title="Start"><img src="Pictures/SirTros-logo.png" alt="SirTros Logo" /></div><div id="datetime"><div id="time">00:00</div><div id="date">--/--/--</div></div></div>
 <div id="toastContainer"></div>
 <div id="volume-toast">🔊 50%</div>
@@ -409,30 +952,21 @@ canvas.addEventListener('mouseup', () => { drawing = false; savePaintToLocalStor
 canvas.addEventListener('mouseout', () => { drawing = false; });
 document.getElementById('paint-clear-btn').onclick = () => { ctx.clearRect(0,0,canvas.width,canvas.height); localStorage.removeItem('paintImage'); };
 
-// --- Start menu ---
-const startButton = document.getElementById('start-button'),
-      startMenu = document.getElementById('start-menu');
-
-startButton.onclick = () => { startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex'; };
-
-document.getElementById('btn-restart').onclick = (event) => {
-    if(event.shiftKey) { window.location.href = 'SOM.html'; }
-    else { window.location.href = 'Restartovani.html'; }
-};
-document.getElementById('btn-lock').onclick = () => window.location.href = 'Zamykani.html';
-document.getElementById('btn-turnoff').onclick = () => {
-    const audio = new Audio('Sounds/Shutdown.wav'); audio.play();
-    window.location.href = 'Vypinani.html';
-};
-
-// --- Date & Time on taskbar ---
 function updateDateTime(){
     const now = new Date();
-    document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    document.getElementById('date').textContent = now.toLocaleDateString();
+
+    document.getElementById('time').textContent =
+    now.toLocaleTimeString([],{
+        hour:'2-digit',
+        minute:'2-digit'
+    });
+
+    document.getElementById('date').textContent =
+    now.toLocaleDateString();
 }
-setInterval(updateDateTime, 1000);
+
 updateDateTime();
+setInterval(updateDateTime,1000);
 
 // --- Terminal ---
 const terminalInput = document.getElementById('terminal-input');
@@ -453,7 +987,7 @@ function handleTerminalCommand(cmd) {
         case 'help': printTerminal('Commands: '+commands.join(', ')); break;
         case 'time': printTerminal('Current time: '+new Date().toLocaleTimeString()); break;
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
-        case 'about': printTerminal('Windows123 OS 1.7'); break;
+        case 'about': printTerminal('Windows123 OS 1.8'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
         case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal, Taskmgr'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
@@ -500,27 +1034,99 @@ document.addEventListener('keydown', (e) => {
 });
 
 
-// Windows123 System Monitor - Freeze + Compute Pressure
+// ===== Windows123 New Start Menu =====
 
-let lastTick = performance.now();
 
-setInterval(() => {
-    const now = performance.now();
 
-    // pokud JS zamrzlo více než 3 sekundy
-    if (now - lastTick > 5000) {
-        window.location.href="Error.html?cpu";
+const newStart = document.getElementById("start-menu-new");
+const startButton = document.getElementById("start-button");
+const powerButton = document.getElementById("power-button");
+const powerMenu = document.getElementById("power-menu");
+const search = document.getElementById("start-search");
+const appsBox = document.getElementById("start-apps");
+
+search.oninput=()=>{
+    let v=search.value.toLowerCase();
+
+    document.querySelectorAll(".start-app").forEach(a=>{
+        a.style.display =
+        a.textContent.toLowerCase().includes(v)
+        ? "flex"
+        : "none";
+    });
+};
+
+const startApps = [
+    {name:"Notepad", icon:"📄", app:textApp},
+    {name:"Calculator", icon:"🧮", app:calcApp},
+    {name:"Paint", icon:"🎨", app:paintApp},
+    {name:"Clock", icon:"🕒", app:clockApp},
+    {name:"Terminal", icon:"📟", app:terminalApp},
+    {name:"Files", icon:"📁", app:filesApp},
+    {name:"Task Manager", icon:"📊", app:taskmanagerApp}
+];
+
+
+// vytvoření aplikací v menu
+startApps.forEach(a=>{
+
+    let app=document.createElement("div");
+
+    app.className="start-app";
+
+    app.innerHTML=`
+    <span style="font-size:25px">${a.icon}</span>
+    <span>${a.name}</span>
+    `;
+
+    app.onclick=()=>{
+        showApp(a.app);
+        newStart.classList.remove("open");
+    };
+
+    appsBox.appendChild(app);
+
+});
+
+
+startButton.onclick=(e)=>{
+    e.stopPropagation();
+
+    newStart.classList.toggle("open");
+};
+
+
+powerButton.onclick=(e)=>{
+    e.stopPropagation();
+    powerMenu.classList.toggle("open");
+};
+
+document.addEventListener("click",(e)=>{
+
+    if(!newStart.contains(e.target) && !startButton.contains(e.target)){
+        
+        if(powerMenu.classList.contains("open")){
+        powerMenu.classList.remove("open");
+        }else{
+        newStart.classList.remove("open");
+}
+
     }
 
-    lastTick = now;
-}, 1000);
+});
 
+
+document.addEventListener("keydown",(e)=>{
+    if(e.key==="Meta" || e.key==="OS" || e.key==="Win"){
+        newStart.classList.remove("open");
+        powerMenu.style.display="none";
+    }
+});
 
 
 </script>
 </body>
-</html>
-
+</html> 
 
 
 
