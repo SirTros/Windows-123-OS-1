@@ -1,10 +1,12 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Windows123 desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 <style>
 body, html {
 margin:0;
@@ -561,6 +563,69 @@ border:none;
 cursor:pointer;
 }
 
+#system-area{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:white;
+}
+
+.system-icon{
+    font-size:24px;
+    cursor:pointer;
+    padding:6px;
+    border-radius:8px;
+}
+
+.system-icon:hover{
+    background:rgba(255,255,255,0.15);
+}
+
+#battery{
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#right-taskbar{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+#system-icons{
+    display:flex;
+    align-items:center;
+    gap:0px;
+}
+
+.system-icon{
+    font-size:24px;
+    color:white;
+}
+
+#battery-area{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    color:white;
+}
+
+#battery-icon{
+    font-size:26px;
+}
+
+#battery-percent{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.separator{
+    color:white;
+    font-size:20px;
+}
+
 
 </style>
 </head>
@@ -647,9 +712,42 @@ Processes:
 
 </div>
 
-<div id="taskbar"><div id="start-button" title="Start"><img src="Pictures/SirTros-logo.png" alt="SirTros Logo" /></div><div id="datetime"><div id="time">00:00</div><div id="date">--/--/--</div></div></div>
-<div id="toastContainer"></div>
-<div id="volume-toast">🔊 50%</div>
+<div id="taskbar">
+
+<div id="start-button" title="Start">
+<img src="Pictures/SirTros-logo.png" alt="SirTros Logo" />
+</div>
+
+
+<div id="right-taskbar">
+
+<div id="system-icons">
+
+
+<div id="battery-area">
+<span id="battery-icon" class="material-symbols-outlined">
+battery_android_frame_full
+</span>
+
+<span id="battery-percent">
+100%
+</span>
+</div>
+
+</div>
+
+
+<div class="separator">|</div>
+
+
+<div id="datetime">
+<div id="time">00:00</div>
+<div id="date">--/--/--</div>
+</div>
+
+</div>
+
+</div>
 
 <script>
 
@@ -1124,6 +1222,61 @@ document.addEventListener("keydown",(e)=>{
     }
 });
 
+
+// ===== Windows123 Battery =====
+
+if(navigator.getBattery){
+
+navigator.getBattery().then((battery)=>{
+
+function updateBattery(){
+
+let level=Math.round(battery.level * 100);
+
+let icon = "battery_android_frame_full";
+
+if(battery.charging){
+    icon = "battery_android_frame_bolt";
+}
+else if(level >= 90){
+    icon = "battery_android_frame_full";
+}
+else if(level >= 70){
+    icon = "battery_android_frame_6";
+}
+else if(level >= 50){
+    icon = "battery_android_frame_5";
+}
+else if(level >= 30){
+    icon = "battery_android_frame_4";
+}
+else if(level >= 10){
+    icon = "battery_android_frame_2";
+}
+else{
+    icon = "battery_android_0";
+}
+
+
+// správná změna ikony
+let batteryIcon = document.getElementById("battery-icon");
+
+batteryIcon.innerHTML = icon;
+
+
+document.getElementById("battery-percent").textContent = level + "%";
+
+}
+
+
+updateBattery();
+
+battery.addEventListener("levelchange", updateBattery);
+battery.addEventListener("chargingchange", updateBattery);
+
+});
+
+}
 
 </script>
 </body>
