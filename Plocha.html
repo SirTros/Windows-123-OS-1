@@ -276,7 +276,7 @@ flex-direction:column;
 align-items:center;
 cursor:pointer;
 user-select:none;
-color:black;
+color:white;
 border-radius:6px;
 text-align:center;
 }
@@ -294,7 +294,7 @@ margin-top:4px;
 white-space:normal;
 word-break:break-word;
 max-width:60px;
-color:black;
+color: black;
 }
 
 
@@ -626,6 +626,46 @@ cursor:pointer;
     font-size:20px;
 }
 
+#games-list{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+padding:10px;
+}
+
+#games-list .file-icon{
+width:60px;
+height:80px;
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+user-select:none;
+color:black;
+border-radius:6px;
+text-align:center;
+}
+
+#games-list .file-icon span{
+font-size:36px;
+}
+
+#games-list .file-icon label{
+font-size:12px;
+margin-top:4px;
+}
+
+#games-list .file-icon:hover{
+background:rgba(0,0,0,0.1);
+}
+
+
+#snake-app{
+    resize:both;
+    overflow:auto;
+    min-width:300px;
+    min-height:730px;
+}
 
 </style>
 </head>
@@ -637,8 +677,43 @@ cursor:pointer;
 <div class="icon" id="icon-paint" style="top:20px; left:180px;"><span>🎨</span><label>Paint</label></div>
 <div class="icon" id="icon-files" style="top:20px; left:260px;"><span>📁</span><label>Files</label></div>
 <div class="icon" id="icon-terminal" style="top:100px; left:20px;"><span>📟</span><label>Terminal</label></div>
+<div class="icon" id="icon-games" style="top:100px; left:100px;">
+    <span>🎮</span>
+    <label>Games</label>
+</div>
 <div class="icon" id="icon-clock" style="top:20px; left:340px;"><span>🕒</span><label>Clock</label></div>
 <div class="icon" id="icon-taskmanager" style="top:20px; left:420px;"><span>📊</span><label>Task Manager</label></div>
+
+<div id="games-app" class="app-window" style="width:320px;height:360px;display:none;top:80px;left:120px;">
+    <div class="app-header">
+        Games
+        <button class="app-close-btn" id="games-app-close">×</button>
+    </div>
+
+    <div id="games-list">
+
+        <div class="file-icon" ondblclick="openSnake()">
+            <span>🎮</span>
+            <label>Snake</label>
+        </div>
+
+    </div>
+</div>
+
+<div id="snake-app" class="app-window" style="width:500px;height:500px;display:none;top:150px;left:150px;">
+    <div class="app-header">
+        Snake Game
+        <button class="app-close-btn" id="snake-app-close">×</button>
+    </div>
+
+    <iframe src="Apps/Snake.html" 
+    style="
+    width:100%;
+    height:100%;
+    border:none;
+    flex:1;
+    "></iframe>
+</div>
 
 <div id="files-app" class="app-window"><div class="app-header">Files<button class="app-close-btn" id="files-app-close">×</button></div><div id="files-list"></div></div>
 <div id="text-app" class="app-window" style="display:none; top:120px; left:120px; width: 400px; height: 300px;"><div class="app-header">Notepad<button class="app-close-btn" id="text-app-close">×</button></div><textarea></textarea></div>
@@ -805,6 +880,14 @@ function updateTaskManager(){
             name:"Task Manager",
             state:taskmanagerApp.style.display === "flex" ? "Running" : "Suspended"
         },
+        {
+            name:"Games",
+            state:gamesApp.style.display === "flex" ? "Running" : "Suspended"
+        },  
+        {
+            name:"Snake Game",
+            state:snakeApp.style.display === "flex" ? "Running" : "Suspended"
+        },      
     ];
 
 
@@ -892,6 +975,7 @@ const filesApp = document.getElementById('files-app'),
       paintApp = document.getElementById('paint-app'),
       terminalApp = document.getElementById('terminal-app'),
       clockApp = document.getElementById('clock-app');
+      gamesApp = document.getElementById('games-app');
 
 const textArea = textApp.querySelector('textarea'),
       filesList = document.getElementById('files-list');
@@ -1088,7 +1172,7 @@ function handleTerminalCommand(cmd) {
         case 'date': printTerminal('Current date: '+new Date().toLocaleDateString()); break;
         case 'about': printTerminal('Windows123 OS 1.8'); break;
         case 'update': printTerminal('Windows123 All OK.'); break;
-        case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal, Taskmgr'); break;
+        case 'apps': printTerminal('Apps: Notepad, Calculator, Paint, Clock, Files, Terminal, Taskmgr, Games, SnakeGame'); break;
         case 'echo': if(arg) printTerminal(arg); else printTerminal('Usage: echo [text]'); break;
 
         case 'run':
@@ -1102,6 +1186,8 @@ function handleTerminalCommand(cmd) {
                 case 'terminal': showApp(terminalApp); break;
                 case 'cmd': showApp(terminalApp); break;
                 case 'taskmgr': showApp(taskmanagerApp); break;
+                case 'games': showApp(gamesApp); break;
+                case 'snakegame': showApp(snakeApp); break;
                 default: printTerminal('Unknown app: '+appName);
             }
             break;
@@ -1162,7 +1248,8 @@ const startApps = [
     {name:"Clock", icon:"🕒", app:clockApp},
     {name:"Terminal", icon:"📟", app:terminalApp},
     {name:"Files", icon:"📁", app:filesApp},
-    {name:"Task Manager", icon:"📊", app:taskmanagerApp}
+    {name:"Task Manager", icon:"📊", app:taskmanagerApp},
+    {name:"Games", icon:"🎮", app:gamesApp}
 ];
 
 
@@ -1277,6 +1364,28 @@ battery.addEventListener("chargingchange", updateBattery);
 });
 
 }
+
+const iconGames = document.getElementById("icon-games");
+
+iconGames.ondblclick = () => showApp(gamesApp);
+
+document.getElementById("games-app-close").onclick = () => {
+    gamesApp.style.display = "none";
+};
+
+const snakeApp = document.getElementById("snake-app");
+
+function openSnake(){
+    gamesApp.style.display="none";
+    showApp(snakeApp);
+}
+
+
+document.getElementById("snake-app-close").onclick = () => {
+    snakeApp.style.display = "none";
+};
+
+makeDraggable(snakeApp);
 
 </script>
 </body>
