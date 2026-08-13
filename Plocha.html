@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -667,6 +668,693 @@ background:rgba(0,0,0,0.1);
     min-height:730px;
 }
 
+
+/* =========================================================
+   WINDOWS123 - MOBILNÍ VERZE
+   Počítačová verze zůstává beze změny
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        touch-action: manipulation;
+    }
+
+    #desktop {
+        width: 100%;
+        height: 100%;
+        padding-bottom: 58px;
+    }
+
+    /* =========================
+       IKONY NA PLOŠE
+       ========================= */
+
+    .icon {
+        width: 72px;
+        height: 76px;
+        border-radius: 10px;
+        z-index: 10;
+    }
+
+    .icon span {
+        font-size: 34px;
+    }
+
+    .icon label {
+        font-size: 11px;
+        line-height: 13px;
+        max-width: 68px;
+    }
+
+    .icon:hover {
+        background: rgba(255,255,255,0.18);
+    }
+
+    /* Mobilní rozmístění ikon */
+    #icon-text {
+        top: 12px !important;
+        left: 10px !important;
+    }
+
+    #icon-calc {
+        top: 12px !important;
+        left: 88px !important;
+    }
+
+    #icon-paint {
+        top: 12px !important;
+        left: 166px !important;
+    }
+
+    #icon-files {
+        top: 12px !important;
+        left: 244px !important;
+    }
+
+    #icon-clock {
+        top: 12px !important;
+        left: 322px !important;
+    }
+
+    #icon-taskmanager {
+        top: 92px !important;
+        left: 10px !important;
+    }
+
+    #icon-terminal {
+        top: 92px !important;
+        left: 88px !important;
+    }
+
+    #icon-games {
+        top: 92px !important;
+        left: 166px !important;
+    }
+
+
+    /* =========================
+       VŠECHNA OKNA
+       ========================= */
+
+    .app-window {
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 75px);
+        box-sizing: border-box;
+        border-width: 2px;
+        border-radius: 10px;
+    }
+
+    .app-header {
+        min-height: 38px;
+        padding: 7px 10px;
+        box-sizing: border-box;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .app-close-btn {
+        font-size: 25px;
+        width: 36px;
+        height: 30px;
+        padding: 0;
+    }
+
+
+    /* =========================
+       NOTEPAD
+       ========================= */
+
+    #text-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 110px) !important;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 75px);
+        left: 10px !important;
+        top: 55px !important;
+    }
+
+    #text-app textarea {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+
+    /* =========================
+       CALCULATOR
+       ========================= */
+
+    #calc-app {
+        width: calc(100vw - 20px) !important;
+        max-width: 340px;
+        left: 10px !important;
+        top: 65px !important;
+    }
+
+    #calc-display {
+        font-size: 25px;
+        height: 52px;
+        margin: 8px;
+        width: calc(100% - 16px);
+    }
+
+    #calc-buttons {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    #calc-buttons button {
+        min-height: 52px;
+        font-size: 20px;
+        padding: 8px;
+    }
+
+    #calc-clear {
+        min-height: 48px;
+    }
+
+
+    /* =========================
+       PAINT
+       ========================= */
+
+    #paint-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 100px) !important;
+        max-width: 600px;
+        left: 10px !important;
+        top: 50px !important;
+    }
+
+    #paint-canvas {
+        width: calc(100% - 20px);
+        height: auto;
+        max-height: calc(100% - 100px);
+        margin: 10px;
+        box-sizing: border-box;
+
+        
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    #paint-toolbar {
+        flex-wrap: wrap;
+        padding: 5px 10px 8px 10px !important;
+        gap: 8px !important;
+    }
+
+    #paint-toolbar button {
+        min-height: 38px;
+        padding: 7px 14px;
+    }
+
+    #paint-color {
+        width: 50px;
+        height: 38px;
+    }
+
+
+    /* =========================
+       FILES
+       ========================= */
+
+    #files-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 100px) !important;
+        max-width: 500px;
+        max-height: calc(100vh - 75px);
+        left: 10px !important;
+        top: 50px !important;
+        padding: 8px;
+    }
+
+    #files-list {
+        gap: 8px;
+        margin-top: 8px;
+        justify-content: flex-start;
+    }
+
+    #files-list .file-icon {
+        width: 68px;
+        height: 78px;
+    }
+
+    #files-list .file-icon span {
+        font-size: 34px;
+    }
+
+    #files-list .file-icon label {
+        font-size: 11px;
+        max-width: 68px;
+    }
+
+
+    /* =========================
+       TERMINAL
+       ========================= */
+
+    #terminal-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 100px) !important;
+        max-width: 700px;
+        left: 10px !important;
+        top: 50px !important;
+    }
+
+    #terminal-output {
+        font-size: 11px;
+        line-height: 16px;
+        padding: 8px;
+        overflow-x: auto;
+    }
+
+    #terminal-input {
+        height: 42px;
+        font-size: 13px !important;
+        padding: 8px !important;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+
+    /* =========================
+       CLOCK
+       ========================= */
+
+    #clock-app {
+        width: calc(100vw - 20px) !important;
+        max-width: 400px;
+        height: 230px !important;
+        left: 10px !important;
+        top: 80px !important;
+    }
+
+    #clock-time {
+        font-size: 42px !important;
+    }
+
+    #clock-date {
+        font-size: 16px !important;
+        padding: 0 10px;
+        text-align: center;
+    }
+
+
+    /* =========================
+       TASK MANAGER
+       ========================= */
+
+    #taskmanager-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 100px) !important;
+        max-width: 700px;
+        left: 10px !important;
+        top: 50px !important;
+    }
+
+    .tm-content {
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .tm-header {
+        font-size: 21px;
+        margin-bottom: 10px;
+    }
+
+    .tm-box {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+
+    .tm-process {
+        padding: 10px 6px;
+        font-size: 13px;
+        gap: 10px;
+    }
+
+
+    /* =========================
+       GAMES
+       ========================= */
+
+    #games-app {
+        width: calc(100vw - 20px) !important;
+        height: 300px !important;
+        max-width: 400px;
+        left: 10px !important;
+        top: 80px !important;
+    }
+
+    #games-list {
+        gap: 8px;
+        padding: 8px;
+    }
+
+    #games-list .file-icon {
+        width: 68px;
+        height: 78px;
+    }
+
+    #games-list .file-icon span {
+        font-size: 34px;
+    }
+
+    #games-list .file-icon label {
+        font-size: 11px;
+    }
+
+
+    /* =========================
+       SNAKE
+       ========================= */
+
+    #snake-app {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 85px) !important;
+
+        min-width: 0 !important;
+        min-height: 0 !important;
+
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 70px);
+
+        left: 10px !important;
+        top: 45px !important;
+
+        resize: none;
+    }
+
+    #snake-app iframe {
+        width: 100% !important;
+        height: 100% !important;
+        min-width: 0 !important;
+        border: none;
+    }
+
+
+    /* =========================
+       START MENU
+       ========================= */
+
+    #start-menu-new {
+        left: 8px;
+        bottom: 64px;
+
+        width: calc(100vw - 16px);
+        max-width: 430px;
+
+        height: min(520px, calc(100vh - 90px));
+
+        padding: 12px;
+        border-radius: 18px;
+        box-sizing: border-box;
+    }
+
+    #start-search {
+        height: 42px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    #start-menu-new h3 {
+        margin: 12px 4px 8px;
+        font-size: 17px;
+    }
+
+    .start-app {
+        min-height: 48px;
+        padding: 8px 10px;
+        gap: 12px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .start-app span:first-child {
+        font-size: 27px !important;
+        width: 34px;
+        text-align: center;
+    }
+
+    #start-bottom {
+        padding-top: 9px;
+    }
+
+    #user-box img {
+        width: 40px;
+        height: 40px;
+    }
+
+    #user-box {
+        font-size: 15px;
+    }
+
+    #power-button {
+        font-size: 30px;
+        padding: 7px;
+    }
+
+    #power-menu {
+        right: 0;
+        bottom: 55px;
+        width: 170px;
+    }
+
+    #power-menu button {
+        min-height: 44px;
+        font-size: 15px;
+    }
+
+
+    /* =========================
+       TASKBAR
+       ========================= */
+
+    #taskbar {
+        height: 58px;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+
+    #start-button {
+        width: 52px;
+        height: 58px;
+        flex-shrink: 0;
+    }
+
+    #start-button img {
+        width: 34px;
+        height: 34px;
+    }
+
+    #right-taskbar {
+        gap: 7px;
+        height: 58px;
+    }
+
+    #system-icons {
+        gap: 0;
+    }
+
+    #battery-area {
+        gap: 3px;
+    }
+
+    #battery-icon {
+        font-size: 23px;
+    }
+
+    #battery-percent {
+        font-size: 12px;
+    }
+
+    .separator {
+        font-size: 18px;
+    }
+
+    #datetime {
+        margin-right: 3px;
+        height: 58px;
+    }
+
+    #datetime #time {
+        font-size: 14px;
+    }
+
+    #datetime #date {
+        font-size: 10px;
+    }
+
+
+    /* =========================
+       TOAST
+       ========================= */
+
+    #toastContainer {
+        top: 8px;
+        right: 8px;
+        left: 8px;
+    }
+
+    .toast {
+        padding: 10px 14px;
+        font-size: 13px;
+        max-width: calc(100vw - 40px);
+    }
+
+    #volume-toast {
+        bottom: 70px;
+        max-width: calc(100vw - 40px);
+        text-align: center;
+        font-size: 15px;
+    }
+}
+
+
+/* =========================================================
+   MENŠÍ TELEFONY
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    .icon {
+        width: 65px;
+        height: 72px;
+    }
+
+    .icon span {
+        font-size: 31px;
+    }
+
+    .icon label {
+        font-size: 10px;
+        max-width: 63px;
+    }
+
+    #icon-text {
+        left: 5px !important;
+    }
+
+    #icon-calc {
+        left: 75px !important;
+    }
+
+    #icon-paint {
+        left: 145px !important;
+    }
+
+    #icon-files {
+        left: 215px !important;
+    }
+
+    #icon-clock {
+        left: 285px !important;
+    }
+
+    #icon-taskmanager {
+        left: 5px !important;
+        top: 85px !important;
+    }
+
+    #icon-terminal {
+        left: 75px !important;
+        top: 85px !important;
+    }
+
+    #icon-games {
+        left: 145px !important;
+        top: 85px !important;
+    }
+
+    #right-taskbar {
+        gap: 4px;
+    }
+
+    #battery-percent {
+        display: none;
+    }
+
+    .separator {
+        font-size: 15px;
+    }
+
+    #datetime #time {
+        font-size: 13px;
+    }
+
+    #datetime #date {
+        font-size: 9px;
+    }
+}
+
+
+/* =========================================================
+   OPRAVDU MALÝ DISPLEJ
+   ========================================================= */
+
+@media (max-width: 340px) {
+
+    .icon {
+        width: 60px;
+    }
+
+    #icon-calc {
+        left: 68px !important;
+    }
+
+    #icon-paint {
+        left: 131px !important;
+    }
+
+    #icon-files {
+        left: 194px !important;
+    }
+
+    #icon-clock {
+        left: 257px !important;
+    }
+
+    #icon-terminal {
+        left: 68px !important;
+    }
+
+    #icon-games {
+        left: 131px !important;
+    }
+
+    #taskbar {
+        padding: 0 4px;
+    }
+
+    #start-button {
+        width: 45px;
+    }
+
+    #start-button img {
+        width: 29px;
+        height: 29px;
+    }
+
+    #battery-icon {
+        font-size: 20px;
+    }
+
+    #datetime #time {
+        font-size: 12px;
+    }
+
+    #datetime #date {
+        font-size: 8px;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -1102,38 +1790,206 @@ function updateClock() {
 
 setInterval(() => { if(clockApp.style.display === 'flex') updateClock(); }, 1000);
 
-// --- Paint ---
+// =====================================================
+// WINDOWS123 — PAINT V2
+// Myš + dotyk + stylus
+// =====================================================
+
 const canvas = document.getElementById('paint-canvas');
 const ctx = canvas.getContext('2d');
-let drawing = false, lastX = 0, lastY = 0;
-const colorPicker = document.getElementById('paint-color');
 
-function savePaintToLocalStorage() { localStorage.setItem('paintImage', canvas.toDataURL()); }
-function loadPaintFromLocalStorage() {
-    let data = localStorage.getItem('paintImage');
-    if(data) {
-        let img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0);
-        img.src = data;
+const colorPicker = document.getElementById('paint-color');
+const paintClearBtn = document.getElementById('paint-clear-btn');
+
+let drawing = false;
+let lastX = 0;
+let lastY = 0;
+
+// Lepší kvalita kreslení
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
+ctx.lineWidth = 4;
+
+// -----------------------------------------------------
+// Převod pozice myši/prstu na canvas
+// -----------------------------------------------------
+
+function getCanvasPosition(e) {
+
+    const rect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+    };
+}
+
+// -----------------------------------------------------
+// Začátek kreslení
+// -----------------------------------------------------
+
+function startDrawing(e) {
+
+    e.preventDefault();
+
+    drawing = true;
+
+    const pos = getCanvasPosition(e);
+
+    lastX = pos.x;
+    lastY = pos.y;
+
+    // Zachytí prst/stylus i mimo canvas
+    if (canvas.setPointerCapture) {
+        try {
+            canvas.setPointerCapture(e.pointerId);
+        } catch {}
     }
 }
+
+// -----------------------------------------------------
+// Kreslení
+// -----------------------------------------------------
+
+function draw(e) {
+
+    if (!drawing) return;
+
+    e.preventDefault();
+
+    const pos = getCanvasPosition(e);
+
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(pos.x, pos.y);
+
+    ctx.stroke();
+
+    lastX = pos.x;
+    lastY = pos.y;
+}
+
+// -----------------------------------------------------
+// Konec kreslení
+// -----------------------------------------------------
+
+function stopDrawing(e) {
+
+    if (!drawing) return;
+
+    drawing = false;
+
+    if (e && canvas.releasePointerCapture) {
+        try {
+            canvas.releasePointerCapture(e.pointerId);
+        } catch {}
+    }
+
+    savePaintToLocalStorage();
+}
+
+// -----------------------------------------------------
+// POINTER EVENTS
+// Funguje:
+// 🖱️ myš
+// 👆 prst
+// ✏️ stylus
+// -----------------------------------------------------
+
+canvas.addEventListener('pointerdown', startDrawing);
+canvas.addEventListener('pointermove', draw);
+canvas.addEventListener('pointerup', stopDrawing);
+canvas.addEventListener('pointercancel', stopDrawing);
+
+// Zabrání posouvání stránky při kreslení
+canvas.style.touchAction = 'none';
+
+// -----------------------------------------------------
+// Uložení obrázku
+// -----------------------------------------------------
+
+function savePaintToLocalStorage() {
+
+    try {
+
+        localStorage.setItem(
+            'paintImage',
+            canvas.toDataURL('image/png')
+        );
+
+    } catch (error) {
+
+        console.warn(
+            'Windows123 Paint: nepodařilo se uložit obrázek.',
+            error
+        );
+
+    }
+
+}
+
+// -----------------------------------------------------
+// Načtení obrázku
+// -----------------------------------------------------
+
+function loadPaintFromLocalStorage() {
+
+    const data = localStorage.getItem('paintImage');
+
+    if (!data) return;
+
+    const img = new Image();
+
+    img.onload = () => {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.drawImage(
+            img,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+    };
+
+    img.src = data;
+}
+
+// Načíst uložený obrázek
 loadPaintFromLocalStorage();
 
-canvas.addEventListener('mousedown', e => { drawing = true; lastX = e.offsetX; lastY = e.offsetY; });
-canvas.addEventListener('mousemove', e => {
-    if(!drawing) return;
-    ctx.strokeStyle = colorPicker.value;
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    lastX = e.offsetX; lastY = e.offsetY;
+// -----------------------------------------------------
+// Vymazání
+// -----------------------------------------------------
+
+paintClearBtn.addEventListener('click', () => {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    localStorage.removeItem('paintImage');
+
 });
-canvas.addEventListener('mouseup', () => { drawing = false; savePaintToLocalStorage(); });
-canvas.addEventListener('mouseout', () => { drawing = false; });
-document.getElementById('paint-clear-btn').onclick = () => { ctx.clearRect(0,0,canvas.width,canvas.height); localStorage.removeItem('paintImage'); };
 
 function updateDateTime(){
     const now = new Date();
