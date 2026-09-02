@@ -1,91 +1,223 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Shutdown</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-      color: white;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      cursor: none;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Shutting down</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    background: #000;
+    color: #fff;
+
+    font-family:
+        "Segoe UI Variable",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    cursor: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   RESTART SCREEN
+   ========================================= */
+
+.restart-screen {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: #000;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding-bottom: 7vh;
+}
+
+/* =========================================
+   RESTARTING
+   ========================================= */
+
+.restarting {
+    color: #fff;
+
+    font-family:
+        "Segoe UI Variable",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 32px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+
+    white-space: nowrap;
+    line-height: 1;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+}
+
+/* =========================================
+   LOADING KOLEČKO
+   ========================================= */
+
+.loading {
+    width: 40px;
+    height: 40px;
+
+    margin-top: 55px;
+
+    flex-shrink: 0;
+}
+
+.loading svg {
+    width: 40px;
+    height: 40px;
+
+    display: block;
+
+    overflow: visible;
+
+    transform-origin: center;
+
+    animation:
+        rotateRing 1.15s linear infinite;
+}
+
+.ring {
+    fill: none;
+
+    stroke: #fff;
+
+    stroke-width: 4px;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    /* C tvar */
+    stroke-dasharray: 86 22;
+    stroke-dashoffset: 0;
+}
+
+/* =========================================
+   ROTACE
+   ========================================= */
+
+@keyframes rotateRing {
+
+    from {
+        transform: rotate(0deg);
     }
 
-    #container {
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   MOBIL
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .restart-screen {
+        padding-bottom: 6vh;
     }
 
-    .spinner {
-      border: 8px solid #ffffff30;
-      border-top: 8px solid #0078D7;
-      border-radius: 50%;
-      width: 70px;
-      height: 70px;
-      animation: spin 1s linear infinite;
-      opacity: 1;
+    .restarting {
+        font-size: 27px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .loading {
+        width: 34px;
+        height: 34px;
+
+        margin-top: 48px;
     }
 
-    .loading-text {
-      position: fixed;
-      top: 63%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 60px;
-      font-weight: bold;
-      user-select: none;
-      white-space: nowrap;
+    .loading svg {
+        width: 34px;
+        height: 34px;
     }
 
-    #fade-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: #000000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1s ease;
-      z-index: 9999;
+    .ring {
+        stroke-width: 3.5px;
     }
-
-    #fade-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  </style>
+}
+</style>
 </head>
+
 <body>
-  <div id="container">
-    <div class="spinner" id="spinner"></div>
-  </div>
 
-  <div class="loading-text">SHUTTING DOWN</div>
+<div class="restart-screen">
 
-  <div id="fade-overlay"></div>
+    <div class="restarting">
+        Shutting down
+    </div>
 
-  <script>
-    const overlay = document.getElementById("fade-overlay");
+    <div class="loading">
 
-    // Po 2,5s se aktivuje fade efekt a pak přesměrování
-    setTimeout(() => {
-      overlay.classList.add('active');
-      setTimeout(() => {
-        window.location.href = "Vypnuto.html";
-      }, 1000);
-    }, 2500);
-  </script>
+        <svg
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+        >
+
+            <circle
+                class="ring"
+                cx="20"
+                cy="20"
+                r="17"
+            />
+
+        </svg>
+
+    </div>
+
+</div>
+
+<script>
+
+/*
+    Restarting trvá 5 sekund.
+    Potom přejde na přihlášení.
+*/
+
+setTimeout(() => {
+
+    window.location.href = "Vypnuto.html";
+
+}, 5000);
+
+</script>
+
 </body>
 </html>
