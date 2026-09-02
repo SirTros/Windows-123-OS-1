@@ -4,210 +4,914 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Login Windows123</title>
+
 <style>
-body, html {
-  margin: 0; padding: 0; height: 100%;
-  background-color: #008000; color: white;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden; user-select: none;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  font-family: "Segoe UI Variable", "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+  background: #008000;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: relative;
 }
-#time { font-size: 80px; font-weight: 600; }
-#date { font-size: 28px; margin-bottom: 60px; font-weight: 600; }
+
+/* TIME */
+
+#time {
+  font-size: clamp(64px, 7vw, 92px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 18px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+#date {
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 95px;
+}
+
+/* POWER BUTTON */
 
 #pcButton {
-  position: fixed; right: 20px; bottom: 20px;
-  font-size: 28px; background: #008000;
-  padding: 10px 16px; border-radius: 10px;
-  cursor: pointer; user-select: none;
-  transition: background 0.2s; z-index: 10;
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 30px;
+  background: rgba(0,0,0,.18);
+  color: white;
+
+  border-radius: 16px;
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    transform .15s ease,
+    box-shadow .2s ease;
+
+  z-index: 10;
 }
-#pcButton:hover { background: #00a000; }
+
+#pcButton:hover {
+  background: rgba(0,0,0,.32);
+  transform: scale(1.05);
+}
+
+#pcButton:active {
+  transform: scale(.94);
+}
+
+/* START MENU */
 
 #startMenu {
-  position: fixed; bottom: 60px; right: 20px;
-  width: 200px; background: #222;
-  border: 2px solid #555; border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  display: none; flex-direction: column;
-  overflow: hidden; z-index: 50;
+  position: fixed;
+  right: 28px;
+  bottom: 96px;
+
+  width: 230px;
+
+  background: rgba(25,25,25,.96);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.45),
+    0 0 0 1px rgba(0,0,0,.2);
+
+  display: none;
+  flex-direction: column;
+
+  overflow: hidden;
+  z-index: 50;
+
+  backdrop-filter: blur(18px);
 }
-#startMenu.active { display: flex; }
-#startMenu h3 { margin: 0; padding: 12px; background: #333; font-size: 18px; border-bottom: 1px solid #444; text-align: center; }
-.start-item { padding: 12px 15px; cursor: pointer; font-size: 16px; transition: background 0.2s; }
-.start-item:hover { background: #444; }
+
+#startMenu.active {
+  display: flex;
+  animation: menuIn .18s ease;
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#startMenu h3 {
+  margin: 0;
+  padding: 17px 18px;
+
+  background: rgba(255,255,255,.05);
+
+  font-size: 19px;
+  font-weight: 650;
+
+  text-align: left;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.start-item {
+  margin: 6px;
+  padding: 14px 16px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 17px;
+  font-weight: 500;
+
+  transition:
+    background .18s ease,
+    transform .12s ease;
+}
+
+.start-item:hover {
+  background: rgba(255,255,255,.1);
+}
+
+.start-item:active {
+  transform: scale(.97);
+}
+
+/* LOGIN OVERLAY */
 
 #overlay {
-  position: fixed; top: 100%;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85);
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  backdrop-filter: blur(6px);
+  position: fixed;
+  top: 100%;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,.86);
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  backdrop-filter: blur(12px);
+
   z-index: 100;
-  transition: top 0.4s ease;
+
+  transition:
+    top .45s cubic-bezier(.2,.8,.2,1);
 }
-#overlay.active { top: 0 !important; }
-#closeBar { position: absolute; top: 0; left: 0; width: 100%; height: 60px; background: #333; color: white; text-align: center; line-height: 60px; font-size: 20px; cursor: pointer; user-select: none; }
 
-#userImage { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px; object-fit: cover; border: 2px solid white; background-color: white; padding: 5px; }
-#userName { font-size: 24px; font-weight: 600; color: white; margin-bottom: 30px; }
-#signInBtn { font-size: 24px; padding: 12px 30px; border-radius: 6px; border: none; background-color: white; color: black; cursor: pointer; transition: background 0.2s; }
-
-#confirmOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 200; }
-#confirmBox { 
-  background: #1a1a1a; color: white; 
-  padding: 30px 40px; 
-  border-radius: 8px; border: 1px solid #444;
-  display: flex; flex-direction: column; 
-  min-width: 350px; 
-  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+#overlay.active {
+  top: 0 !important;
 }
-#confirmBox p { margin-bottom: 25px; font-size: 19px; text-align: center; }
-#confirmBox .buttons { display: flex; justify-content: center; gap: 20px; }
-#confirmBox button { padding: 10px 25px; font-size: 16px; cursor: pointer; border-radius: 4px; border: none; font-weight: 600; }
-#confirmBox button.yes { background: #008000; color: white; }
-#confirmBox button.no { background: #d13438; color: white; }
 
-#blackScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: white; display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 999; opacity: 0; transition: opacity 1s; }
-#blackScreen.show { display: flex; opacity: 1; }
-.loader { border: 5px solid #333; border-top: 5px solid white; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
+/* CLOSE BAR */
+
+#closeBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255,255,255,.06);
+
+  color: white;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  transition: background .2s ease;
+}
+
+#closeBar:hover {
+  background: rgba(255,255,255,.1);
+}
+
+/* USER IMAGE */
+
+#userImage {
+  width: 150px;
+  height: 150px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  margin-bottom: 26px;
+
+  border: 2px solid rgba(255,255,255,.9);
+
+  background: white;
+  padding: 5px;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.35);
+}
+
+/* USER NAME */
+
+#userName {
+  font-size: 28px;
+  font-weight: 700;
+
+  margin-bottom: 38px;
+
+  color: white;
+}
+
+/* SIGN IN */
+
+#signInBtn {
+  min-width: 175px;
+
+  padding: 14px 36px;
+
+  border-radius: 10px;
+  border: none;
+
+  background: white;
+  color: black;
+
+  font-family: inherit;
+
+  font-size: 20px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.25);
+
+  transition:
+    background .2s ease,
+    transform .12s ease,
+    box-shadow .2s ease;
+}
+
+#signInBtn:hover {
+  background: #f1f1f1;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.35);
+}
+
+#signInBtn:active {
+  transform: scale(.95);
+}
+
+/* CONFIRM */
+
+#confirmOverlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.65);
+
+  display: none;
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 200;
+
+  backdrop-filter: blur(5px);
+}
+
+#confirmBox {
+  width: min(430px, calc(100% - 40px));
+
+  background: #1c1c1c;
+  color: white;
+
+  padding: 34px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.5);
+
+  display: flex;
+  flex-direction: column;
+}
+
+#confirmBox p {
+  margin: 0 0 32px;
+
+  font-size: 20px;
+  font-weight: 500;
+
+  text-align: center;
+
+  line-height: 1.4;
+}
+
+#confirmBox .buttons {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 16px;
+}
+
+#confirmBox button {
+  min-width: 110px;
+
+  padding: 13px 23px;
+
+  font-family: inherit;
+
+  font-size: 16px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  border-radius: 9px;
+  border: none;
+
+  transition:
+    transform .12s ease,
+    filter .2s ease;
+}
+
+#confirmBox button:hover {
+  filter: brightness(1.12);
+}
+
+#confirmBox button:active {
+  transform: scale(.94);
+}
+
+#confirmBox button.yes {
+  background: #008000;
+  color: white;
+}
+
+#confirmBox button.no {
+  background: #d13438;
+  color: white;
+}
+
+/* BLACK SCREEN */
+
+#blackScreen {
+  position: fixed;
+  inset: 0;
+
+  background: black;
+  color: white;
+
+  display: none;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-direction: column;
+
+  z-index: 999;
+
+  opacity: 0;
+
+  transition: opacity 1s ease;
+}
+
+#blackScreen.show {
+  display: flex;
+  opacity: 1;
+}
+
+.loader {
+  width: 52px;
+  height: 52px;
+
+  border: 5px solid #333;
+  border-top: 5px solid white;
+
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+
+  margin-bottom: 30px;
+}
+
+#welcomeText {
+  font-size: clamp(36px, 5vw, 52px);
+
+  font-weight: 700;
+
+  letter-spacing: -.5px;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+
+  #date {
+    margin-bottom: 75px;
+  }
+
+  #pcButton {
+    right: 18px;
+    bottom: 18px;
+  }
+
+  #startMenu {
+    right: 18px;
+    bottom: 86px;
+  }
+
+  #userImage {
+    width: 125px;
+    height: 125px;
+  }
+
+  #userName {
+    font-size: 24px;
+  }
+
+  #confirmBox {
+    padding: 26px 20px;
+  }
+}
 </style>
 </head>
+
 <body>
 
 <div id="time"></div>
 <div id="date"></div>
 
-<div id="pcButton">⏻</div>
+<div id="pcButton" title="Power">⏻</div>
 
 <div id="startMenu">
+
   <h3>Start</h3>
-  <div class="start-item" id="sdBtn">Shutdown</div>
-  <div class="start-item" id="rsBtn">Restart</div>
+
+  <div class="start-item" id="sdBtn">
+    Shutdown
+  </div>
+
+  <div class="start-item" id="rsBtn">
+    Restart
+  </div>
+
 </div>
+
+<!-- LOGIN -->
 
 <div id="overlay">
-  <div id="closeBar">Click to close</div>
-  <img id="userImage" src="Pictures/User.png" alt="User" />
-  <div id="userName">USER</div>
-  <button id="signInBtn">Sign in</button>
+
+  <div id="closeBar">
+    Click to close
+  </div>
+
+  <img
+    id="userImage"
+    src="Pictures/User.png"
+    alt="User"
+  />
+
+  <div id="userName">
+    USER
+  </div>
+
+  <button id="signInBtn">
+    Sign in
+  </button>
+
 </div>
+
+<!-- CONFIRM -->
 
 <div id="confirmOverlay">
+
   <div id="confirmBox">
-    <p id="confirmText">Are you sure?</p>
+
+    <p id="confirmText">
+      Are you sure?
+    </p>
+
     <div class="buttons">
-      <button class="yes">YES</button>
-      <button class="no">NO</button>
+
+      <button class="yes">
+        YES
+      </button>
+
+      <button class="no">
+        NO
+      </button>
+
     </div>
+
   </div>
+
 </div>
+
+<!-- WELCOME -->
 
 <div id="blackScreen">
+
   <div class="loader"></div>
-  <div style="font-size: 50px; font-weight: 600;">Welcome</div>
+
+  <div id="welcomeText">
+    Welcome
+  </div>
+
 </div>
 
-<audio id="welcomeSound" src="Sounds/Welcome.wav" preload="auto"></audio>
-<audio id="windowSound" src="Sounds/Window.wav" preload="auto"></audio>
+<audio
+  id="welcomeSound"
+  src="Sounds/Welcome.wav"
+  preload="auto">
+</audio>
+
+<audio
+  id="windowSound"
+  src="Sounds/Window.wav"
+  preload="auto">
+</audio>
 
 <script>
-const timeEl = document.getElementById('time');
-const dateEl = document.getElementById('date');
-const pcButton = document.getElementById('pcButton');
-const startMenu = document.getElementById('startMenu');
-const overlay = document.getElementById('overlay');
-const signInBtn = document.getElementById('signInBtn');
-const confirmOverlay = document.getElementById('confirmOverlay');
-const blackScreen = document.getElementById('blackScreen');
-const welcomeSound = document.getElementById('welcomeSound');
-const windowSound = document.getElementById('windowSound');
-const closeBar = document.getElementById('closeBar');
 
-let currentAction = ""; 
+const timeEl = document.getElementById("time");
+const dateEl = document.getElementById("date");
 
-// Čas a datum
+const pcButton = document.getElementById("pcButton");
+const startMenu = document.getElementById("startMenu");
+
+const overlay = document.getElementById("overlay");
+const signInBtn = document.getElementById("signInBtn");
+const closeBar = document.getElementById("closeBar");
+
+const confirmOverlay =
+  document.getElementById("confirmOverlay");
+
+const confirmText =
+  document.getElementById("confirmText");
+
+const blackScreen =
+  document.getElementById("blackScreen");
+
+const welcomeSound =
+  document.getElementById("welcomeSound");
+
+const windowSound =
+  document.getElementById("windowSound");
+
+let currentAction = "";
+
+
+/* TIME */
+
 function updateTime() {
+
   const now = new Date();
-  timeEl.textContent = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  timeEl.textContent =
+    String(now.getHours()).padStart(2, "0")
+    + ":"
+    + String(now.getMinutes()).padStart(2, "0");
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  dateEl.textContent =
+    `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
-setInterval(updateTime, 1000); updateTime();
 
-// Start menu
-pcButton.addEventListener('click', e => { e.stopPropagation(); startMenu.classList.toggle('active'); });
-document.addEventListener('click', () => startMenu.classList.remove('active'));
+setInterval(updateTime, 1000);
+updateTime();
 
-// Shutdown/Restart
-document.getElementById('sdBtn').addEventListener('click', e => { 
-  e.stopPropagation(); 
+
+/* POWER MENU */
+
+pcButton.addEventListener("click", function(e) {
+
+  e.stopPropagation();
+
+  startMenu.classList.toggle("active");
+
+});
+
+document.addEventListener("click", function() {
+
+  startMenu.classList.remove("active");
+
+});
+
+startMenu.addEventListener("click", function(e) {
+
+  e.stopPropagation();
+
+});
+
+
+/* SHUTDOWN */
+
+document.getElementById("sdBtn")
+.addEventListener("click", function() {
+
   currentAction = "Vypinani.html";
-  document.getElementById('confirmText').textContent = "Do you want to shutdown the computer?";
-  confirmOverlay.style.display='flex'; 
-  if(windowSound) windowSound.play();
+
+  confirmText.textContent =
+    "Do you want to shutdown the computer?";
+
+  confirmOverlay.style.display = "flex";
+
+  if (windowSound) {
+
+    windowSound.currentTime = 0;
+
+    windowSound.play().catch(() => {});
+
+  }
+
 });
-document.getElementById('rsBtn').addEventListener('click', e => { 
-  e.stopPropagation(); 
+
+
+/* RESTART */
+
+document.getElementById("rsBtn")
+.addEventListener("click", function() {
+
   currentAction = "Restartovani.html";
-  document.getElementById('confirmText').textContent = "Do you want to restart the computer?";
-  confirmOverlay.style.display='flex'; 
-  if(windowSound) windowSound.play();
+
+  confirmText.textContent =
+    "Do you want to restart the computer?";
+
+  confirmOverlay.style.display = "flex";
+
+  if (windowSound) {
+
+    windowSound.currentTime = 0;
+
+    windowSound.play().catch(() => {});
+
+  }
+
 });
 
-confirmOverlay.querySelector('.no').addEventListener('click', () => confirmOverlay.style.display='none');
-confirmOverlay.querySelector('.yes').addEventListener('click', () => { window.location.href = currentAction; });
 
-// Zavření overlay klikem
-closeBar.addEventListener('click', () => {
-  overlay.style.transition = 'top 0.4s ease';
-  overlay.style.top = '100%';
-  overlay.classList.remove('active');
+/* CONFIRM */
+
+confirmOverlay.querySelector(".no")
+.addEventListener("click", function() {
+
+  confirmOverlay.style.display = "none";
+
 });
 
-// --- DRAG UP OTEVŘENÍ ---
+confirmOverlay.querySelector(".yes")
+.addEventListener("click", function() {
+
+  window.location.href = currentAction;
+
+});
+
+
+/* CLOSE */
+
+closeBar.addEventListener("click", function() {
+
+  overlay.style.top = "100%";
+
+  overlay.classList.remove("active");
+
+});
+
+
+/* DRAG UP */
+
 let isDragging = false;
 let startY = 0;
-let overlayHeight = overlay.offsetHeight;
 
-document.addEventListener('mousedown', e => {
-  if(e.clientY > window.innerHeight - 100){ // spodní oblast pro drag up
+document.addEventListener("mousedown", function(e) {
+
+  if (e.clientY > window.innerHeight - 120) {
+
     isDragging = true;
+
     startY = e.clientY;
-    overlay.style.transition = 'none';
+
+    overlay.style.transition = "none";
+
   }
-});
-document.addEventListener('mousemove', e => {
-  if(!isDragging) return;
-  let delta = startY - e.clientY; // drag up
-  if(delta > 0){ // jen drag nahoru
-    overlay.style.top = Math.max(100 - delta*100/overlayHeight, 0) + '%';
-  }
-});
-document.addEventListener('mouseup', e => {
-  if(!isDragging) return;
-  isDragging = false;
-  overlay.style.transition = 'top 0.4s ease';
-  if(parseInt(overlay.style.top) <= 50){ // pokud dostatečně nahoru, otevři
-    overlay.style.top = '0%';
-    overlay.classList.add('active');
-  } else { // jinak zůstaň dole
-    overlay.style.top = '100%';
-    overlay.classList.remove('active');
-  }
+
 });
 
-// Sign in
-signInBtn.addEventListener('click', () => {
-  overlay.style.display = 'none';
-  blackScreen.classList.add('show');
-  if(welcomeSound) welcomeSound.play();
-  setTimeout(() => { window.location.href = 'Plocha.html'; }, 5000);
+document.addEventListener("mousemove", function(e) {
+
+  if (!isDragging) return;
+
+  const overlayHeight =
+    overlay.offsetHeight;
+
+  const delta =
+    startY - e.clientY;
+
+  if (delta > 0) {
+
+    const percentage =
+      Math.max(
+        100 - delta * 100 / overlayHeight,
+        0
+      );
+
+    overlay.style.top =
+      percentage + "%";
+
+  }
+
 });
+
+document.addEventListener("mouseup", function() {
+
+  if (!isDragging) return;
+
+  isDragging = false;
+
+  overlay.style.transition =
+    "top .45s cubic-bezier(.2,.8,.2,1)";
+
+  const currentTop =
+    parseFloat(overlay.style.top);
+
+  if (currentTop <= 50) {
+
+    overlay.style.top = "0%";
+
+    overlay.classList.add("active");
+
+  } else {
+
+    overlay.style.top = "100%";
+
+    overlay.classList.remove("active");
+
+  }
+
+});
+
+
+/* SIGN IN */
+
+function signIn() {
+
+  overlay.style.display = "none";
+
+  blackScreen.classList.add("show");
+
+  if (welcomeSound) {
+
+    welcomeSound.currentTime = 0;
+
+    welcomeSound.play().catch(() => {});
+
+  }
+
+  setTimeout(function() {
+
+    window.location.href = "Plocha.html";
+
+  }, 5000);
+
+}
+
+signInBtn.addEventListener("click", signIn);
+
+
+/* KEYBOARD */
+
+document.addEventListener("keydown", function(e) {
+
+  /* SPACE */
+
+  if (e.code === "Space") {
+
+    e.preventDefault();
+
+    if (
+      !overlay.classList.contains("active") &&
+      confirmOverlay.style.display !== "flex"
+    ) {
+
+      overlay.style.top = "0%";
+
+      overlay.classList.add("active");
+
+    }
+
+  }
+
+
+  /* ENTER */
+
+  if (e.key === "Enter") {
+
+    if (
+      !overlay.classList.contains("active") &&
+      confirmOverlay.style.display !== "flex"
+    ) {
+
+      overlay.style.top = "0%";
+
+      overlay.classList.add("active");
+
+    }
+
+  }
+
+
+  /* ESC */
+
+  if (e.key === "Escape") {
+
+    if (confirmOverlay.style.display === "flex") {
+
+      confirmOverlay.style.display = "none";
+
+    }
+
+    else if (overlay.classList.contains("active")) {
+
+      overlay.style.top = "100%";
+
+      overlay.classList.remove("active");
+
+    }
+
+    else {
+
+      startMenu.classList.remove("active");
+
+    }
+
+  }
+
+});
+
 </script>
+
 </body>
 </html>
