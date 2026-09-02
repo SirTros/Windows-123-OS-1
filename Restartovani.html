@@ -18,12 +18,12 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000000;
+    background: #000;
 }
 
 body {
-    background: #000000;
-    color: #ffffff;
+    background: #000;
+    color: #fff;
 
     font-family:
         "Segoe UI Variable",
@@ -48,7 +48,15 @@ body {
     width: 100vw;
     height: 100vh;
 
-    background: #000000;
+    background: #000;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding-bottom: 7vh;
 }
 
 /* =========================================
@@ -56,14 +64,7 @@ body {
    ========================================= */
 
 .restarting {
-    position: absolute;
-
-    top: 36%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    color: #ffffff;
+    color: #fff;
 
     font-family:
         "Segoe UI Variable",
@@ -72,13 +73,12 @@ body {
         sans-serif;
 
     font-size: 32px;
-
-    /* výraznější bold */
     font-weight: 600;
 
-    letter-spacing: -0.4px;
+    letter-spacing: -0.5px;
 
     white-space: nowrap;
+    line-height: 1;
 
     -webkit-font-smoothing: antialiased;
     text-rendering: geometricPrecision;
@@ -89,20 +89,17 @@ body {
    ========================================= */
 
 .loading {
-    position: absolute;
+    width: 40px;
+    height: 40px;
 
-    left: 50%;
-    top: 48%;
+    margin-top: 55px;
 
-    width: 38px;
-    height: 38px;
-
-    transform: translate(-50%, -50%);
+    flex-shrink: 0;
 }
 
 .loading svg {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 
     display: block;
 
@@ -117,26 +114,20 @@ body {
 .ring {
     fill: none;
 
-    stroke: #ffffff;
+    stroke: #fff;
 
-    /* BOLD */
     stroke-width: 4px;
 
-    /* dokonale kulaté konce */
     stroke-linecap: round;
     stroke-linejoin: round;
 
-    /*
-        C tvar.
-        Přibližně 20 % obvodu tvoří mezera.
-    */
+    /* C tvar */
     stroke-dasharray: 86 22;
-
     stroke-dashoffset: 0;
 }
 
 /* =========================================
-   ROTACE KOLEČKA
+   ROTACE
    ========================================= */
 
 @keyframes rotateRing {
@@ -151,51 +142,26 @@ body {
 }
 
 /* =========================================
-   ZELENÝ FADE
-   ========================================= */
-
-#green-transition {
-    position: fixed;
-    inset: 0;
-
-    background: #008000;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    z-index: 9999;
-
-    transition:
-        opacity 1.8s
-        cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-#green-transition.active {
-    opacity: 1;
-}
-
-/* =========================================
    MOBIL
    ========================================= */
 
 @media (max-width: 600px) {
 
+    .restart-screen {
+        padding-bottom: 6vh;
+    }
+
     .restarting {
-        top: 35%;
-
         font-size: 27px;
-
         font-weight: 600;
-
         letter-spacing: -0.3px;
     }
 
     .loading {
-        top: 48%;
-
         width: 34px;
         height: 34px;
+
+        margin-top: 48px;
     }
 
     .loading svg {
@@ -207,54 +173,17 @@ body {
         stroke-width: 3.5px;
     }
 }
-
-/* =========================================
-   VELKÉ MONITORY
-   ========================================= */
-
-@media (min-width: 1600px) {
-
-    .restarting {
-        top: 36%;
-
-        font-size: 34px;
-
-        font-weight: 600;
-    }
-
-    .loading {
-        top: 48%;
-
-        width: 40px;
-        height: 40px;
-    }
-
-    .loading svg {
-        width: 40px;
-        height: 40px;
-    }
-
-    .ring {
-        stroke-width: 4px;
-    }
-}
 </style>
 </head>
 
 <body>
 
-<!-- =========================================
-     RESTART SCREEN
-     ========================================= -->
-
 <div class="restart-screen">
 
-    <!-- TEXT -->
     <div class="restarting">
         Restarting
     </div>
 
-    <!-- LOADING -->
     <div class="loading">
 
         <svg
@@ -275,51 +204,18 @@ body {
 
 </div>
 
-
-<!-- =========================================
-     ZELENÝ PŘECHOD
-     ========================================= -->
-
-<div id="green-transition"></div>
-
-
 <script>
 
-const greenTransition =
-    document.getElementById("green-transition");
-
 /*
-    14,5 sekundy restartovací obrazovky
+    Restarting trvá 5 sekund.
+    Potom přejde na přihlášení.
 */
 
 setTimeout(() => {
 
-    /* Začátek zeleného fade */
+    window.location.href = "Prihlaseni.html";
 
-    greenTransition.classList.add("active");
-
-
-    /*
-        Fade trvá 1,8 sekundy.
-    */
-
-    setTimeout(() => {
-
-        /*
-            Po dokončení fade
-            ještě 1 sekundu počkáme.
-        */
-
-        setTimeout(() => {
-
-            window.location.href =
-                "Prihlaseni.html";
-
-        }, 1000);
-
-    }, 1800);
-
-}, 5500);
+}, 5000);
 
 </script>
 
