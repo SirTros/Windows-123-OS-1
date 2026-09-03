@@ -28,6 +28,7 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
+  cursor: pointer;
 }
 
 /* TIME */
@@ -654,23 +655,80 @@ pcButton.addEventListener("click", function(e) {
 
 });
 
-document.addEventListener("click", function() {
+document.addEventListener("click", function(e) {
 
   startMenu.classList.remove("active");
 
 });
 
-startMenu.addEventListener("click", function(e) {
 
-  e.stopPropagation();
+/* =========================================
+   CLICK / TOUCH ANYWHERE → LOGIN
+   ========================================= */
+
+function openLogin() {
+
+  if (confirmOverlay.style.display === "flex") {
+    return;
+  }
+
+  if (blackScreen.classList.contains("show")) {
+    return;
+  }
+
+  overlay.style.top = "0%";
+  overlay.classList.add("active");
+
+}
+
+
+/* MOUSE CLICK */
+
+document.addEventListener("click", function(e) {
+
+  /*
+    Power button and Start menu do not
+    open the login screen.
+  */
+
+  if (
+    e.target.closest("#pcButton") ||
+    e.target.closest("#startMenu") ||
+    e.target.closest("#overlay") ||
+    e.target.closest("#confirmOverlay")
+  ) {
+    return;
+  }
+
+  openLogin();
 
 });
+
+
+/* TOUCH */
+
+document.addEventListener("touchstart", function(e) {
+
+  if (
+    e.target.closest("#pcButton") ||
+    e.target.closest("#startMenu") ||
+    e.target.closest("#overlay") ||
+    e.target.closest("#confirmOverlay")
+  ) {
+    return;
+  }
+
+  openLogin();
+
+}, { passive: true });
 
 
 /* SHUTDOWN */
 
 document.getElementById("sdBtn")
-.addEventListener("click", function() {
+.addEventListener("click", function(e) {
+
+  e.stopPropagation();
 
   currentAction = "Vypinani.html";
 
@@ -693,7 +751,9 @@ document.getElementById("sdBtn")
 /* RESTART */
 
 document.getElementById("rsBtn")
-.addEventListener("click", function() {
+.addEventListener("click", function(e) {
+
+  e.stopPropagation();
 
   currentAction = "Restartovani.html";
 
@@ -716,23 +776,29 @@ document.getElementById("rsBtn")
 /* CONFIRM */
 
 confirmOverlay.querySelector(".no")
-.addEventListener("click", function() {
+.addEventListener("click", function(e) {
+
+  e.stopPropagation();
 
   confirmOverlay.style.display = "none";
 
 });
 
 confirmOverlay.querySelector(".yes")
-.addEventListener("click", function() {
+.addEventListener("click", function(e) {
+
+  e.stopPropagation();
 
   window.location.href = currentAction;
 
 });
 
 
-/* CLOSE */
+/* CLOSE LOGIN */
 
-closeBar.addEventListener("click", function() {
+closeBar.addEventListener("click", function(e) {
+
+  e.stopPropagation();
 
   overlay.style.top = "100%";
 
@@ -747,6 +813,13 @@ let isDragging = false;
 let startY = 0;
 
 document.addEventListener("mousedown", function(e) {
+
+  if (
+    overlay.classList.contains("active") ||
+    e.target.closest("#overlay")
+  ) {
+    return;
+  }
 
   if (e.clientY > window.innerHeight - 120) {
 
@@ -838,7 +911,13 @@ function signIn() {
 
 }
 
-signInBtn.addEventListener("click", signIn);
+signInBtn.addEventListener("click", function(e) {
+
+  e.stopPropagation();
+
+  signIn();
+
+});
 
 
 /* KEYBOARD */
@@ -856,9 +935,7 @@ document.addEventListener("keydown", function(e) {
       confirmOverlay.style.display !== "flex"
     ) {
 
-      overlay.style.top = "0%";
-
-      overlay.classList.add("active");
+      openLogin();
 
     }
 
@@ -874,9 +951,7 @@ document.addEventListener("keydown", function(e) {
       confirmOverlay.style.display !== "flex"
     ) {
 
-      overlay.style.top = "0%";
-
-      overlay.classList.add("active");
+      openLogin();
 
     }
 
